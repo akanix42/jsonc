@@ -24,8 +24,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 _chai2.default.should();
 
-describe("Serializer", function () {
-  describe(".serialize()", function () {
+describe('Serializer', function () {
+  describe('.serialize()', function () {
 
     it('serializes empty objects', function () {
       var serializer = new _serializer2.default();
@@ -73,6 +73,25 @@ describe("Serializer", function () {
       output.should.equal('{instances:[{__type__:"__object__",__value__:{c:"test"}}],root:{a:1,b:{__index__:0}}}');
     });
 
+    it('serializes registered types', function () {
+      var _class, _temp;
+
+      var mockJsonc = { hasType: function hasType() {
+          return true;
+        } };
+      var serializer = new _serializer2.default(mockJsonc);
+      var TestClass = (_temp = _class = function TestClass() {
+        _classCallCheck(this, TestClass);
+
+        this.test = '123';
+      }, _class.__type__ = 'test', _temp);
+
+      var obj = new TestClass();
+      var output = _json2.default.stringify(serializer.serialize([obj]));
+
+      output.should.equal('{instances:[{__type__:"test",__value__:{test:"123"}}],root:[{__index__:0}]}');
+    });
+
     it('stores references to an object instead of multiple copies', function () {
       var mockJsonc = { hasType: function hasType() {
           return false;
@@ -85,12 +104,13 @@ describe("Serializer", function () {
     });
 
     it('allows serialization overriding of registered types via the Serializer.Symbols.Serialize property', function () {
+      var _class2, _temp2;
+
       var mockJsonc = { hasType: function hasType() {
           return true;
         } };
       var serializer = new _serializer2.default(mockJsonc);
-
-      var TestClass = function () {
+      var TestClass = (_temp2 = _class2 = function () {
         function TestClass() {
           _classCallCheck(this, TestClass);
         }
@@ -103,9 +123,7 @@ describe("Serializer", function () {
         }]);
 
         return TestClass;
-      }();
-
-      TestClass.__type__ = 'test';
+      }(), _class2.__type__ = 'test', _temp2);
 
       var obj = new TestClass();
       var output = _json2.default.stringify(serializer.serialize([obj]));

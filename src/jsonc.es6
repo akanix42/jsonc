@@ -1,23 +1,25 @@
 "use strict";
 import json5 from 'json5';
-import { Serializer } from './serializer';
-import { Deserializer } from './deserializer';
+import Serializer from './serializer';
+import Deserializer from './deserializer';
 
 export default class Jsonc {
   registry = {};
 
-  register(type) {
-    if (!type.__type__) {
+  register(type, typeName) {
+    typeName = typeName || type.__type__;
+    if (!typeName) {
       console.error("Error registering type: no typename specified!");
       return;
     }
 
-    if (this.hasType(type.__type__)) {
-      console.error(`Error registering type: ${typeName} is already registered by ${this.registry[type.typeName].toString()}!`, type);
+    if (this.hasTypeName(typeName)) {
+      console.error(`Error registering type: ${typeName} is already registered by ${this.registry[typeName].toString()}!`, type);
       return;
     }
 
-    this.registry[type.__type__] = type;
+    this.registry[typeName] = type;
+    type.__type__ = typeName;
   }
 
   hasType(type) {
@@ -29,11 +31,11 @@ export default class Jsonc {
   }
 
   stringify(data) {
-    return json5.stringify(this.encode(data));
+    return json5.stringify(this.serialize(data));
   }
 
   parse(json) {
-    return this.decode(json5.parse(json));
+    return this.deserialize(json5.parse(json));
   }
 
   serialize(data) {

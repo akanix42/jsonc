@@ -1,12 +1,12 @@
-import "babel-polyfill";
+import 'babel-polyfill';
 import chai from 'chai';
 import json5 from 'json5';
 import Serializer from './serializer';
 
 chai.should();
 
-describe("Serializer", () => {
-  describe(".serialize()", () => {
+describe('Serializer', () => {
+  describe('.serialize()', () => {
 
     it('serializes empty objects', () => {
       const serializer = new Serializer();
@@ -50,6 +50,19 @@ describe("Serializer", () => {
       const output = json5.stringify(serializer.serialize(obj));
 
       output.should.equal('{instances:[{__type__:"__object__",__value__:{c:"test"}}],root:{a:1,b:{__index__:0}}}');
+    });
+
+    it('serializes registered types', () => {
+      const mockJsonc = {hasType: () => true};
+      const serializer = new Serializer(mockJsonc);
+      class TestClass {
+        static __type__ = 'test';
+        test = '123';
+      }
+      const obj = new TestClass();
+      const output = json5.stringify(serializer.serialize([obj]));
+
+      output.should.equal('{instances:[{__type__:"test",__value__:{test:"123"}}],root:[{__index__:0}]}');
     });
 
     it('stores references to an object instead of multiple copies', () => {

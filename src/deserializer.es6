@@ -1,5 +1,6 @@
 'use strict';
 import _ from 'lodash';
+import autobind from 'autobind-decorator'
 
 export default class Deserializer {
   static Symbols = {PostProcess: Symbol()};
@@ -16,13 +17,14 @@ export default class Deserializer {
     this.data = data;
     this.instances = this._map(this.data.instances, this._instantiateValue);
 
-    _.forEach(this.instances, this._restoreProperties, this);
+    _.forEach(this.instances, this._restoreProperties);
     this._restoreProperties(this.data.root);
-    _.forEach(this.objectsToPostProcess, this._postProcess, this);
+    _.forEach(this.objectsToPostProcess, this._postProcess);
 
     return this.data.root;
   }
 
+  @autobind
   _map(obj, fn) {
     if (obj instanceof Array)
       return _.map(obj, fn, this);
@@ -30,6 +32,7 @@ export default class Deserializer {
       return _.mapValues(obj, fn, this);
   }
 
+  @autobind
   _instantiateValue(value) {
     const isRegisteredType = (obj) => '__type__' in obj && obj.__type__ && this.jsonc.hasTypeName(obj.__type__);
     const isNativeType = (obj) => '__type__' in obj && (obj.__type__ === '__object__' || obj.__type__ === '__array__');
@@ -65,6 +68,7 @@ export default class Deserializer {
     }
   }
 
+  @autobind
   _getTypeCategory(value) {
     const type = typeof value;
     if (type === 'function' || (value !== null && type === 'object'))
@@ -72,14 +76,16 @@ export default class Deserializer {
     return 'primitive';
   }
 
+  @autobind
   _restoreProperties(obj) {
     const typeCategory = this._getTypeCategory(obj);
     if (typeCategory !== 'object')
       return;
 
-    _.forOwn(obj, this._restoreProperty, this);
+    _.forOwn(obj, this._restoreProperty);
   }
 
+  @autobind
   _restoreProperty(value, key, obj) {
     const isReference = (obj) => '__index__' in obj;
     const typeCategory = this._getTypeCategory(value);
@@ -90,6 +96,7 @@ export default class Deserializer {
       obj[key] = this.instances[value.__index__];
   }
 
+  @autobind
   _postProcess(obj) {
     obj[Deserializer.Symbols.PostProcess]();
   }

@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -12,7 +13,11 @@ var _json2 = _interopRequireDefault(_json);
 
 var _serializer = require('./serializer');
 
+var _serializer2 = _interopRequireDefault(_serializer);
+
 var _deserializer = require('./deserializer');
+
+var _deserializer2 = _interopRequireDefault(_deserializer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27,18 +32,20 @@ var Jsonc = function () {
 
   _createClass(Jsonc, [{
     key: 'register',
-    value: function register(type) {
-      if (!type.__type__) {
+    value: function register(type, typeName) {
+      typeName = typeName || type.__type__;
+      if (!typeName) {
         console.error("Error registering type: no typename specified!");
         return;
       }
 
-      if (this.hasType(type.__type__)) {
-        console.error('Error registering type: ' + typeName + ' is already registered by ' + this.registry[type.typeName].toString() + '!', type);
+      if (this.hasTypeName(typeName)) {
+        console.error('Error registering type: ' + typeName + ' is already registered by ' + this.registry[typeName].toString() + '!', type);
         return;
       }
 
-      this.registry[type.__type__] = type;
+      this.registry[typeName] = type;
+      type.__type__ = typeName;
     }
   }, {
     key: 'hasType',
@@ -53,22 +60,22 @@ var Jsonc = function () {
   }, {
     key: 'stringify',
     value: function stringify(data) {
-      return _json2.default.stringify(this.encode(data));
+      return _json2.default.stringify(this.serialize(data));
     }
   }, {
     key: 'parse',
     value: function parse(json) {
-      return this.decode(_json2.default.parse(json));
+      return this.deserialize(_json2.default.parse(json));
     }
   }, {
     key: 'serialize',
     value: function serialize(data) {
-      return new _serializer.Serializer().serialize(data);
+      return new _serializer2.default().serialize(data);
     }
   }, {
     key: 'deserialize',
     value: function deserialize(data) {
-      return new _deserializer.Deserializer().deserialize(data);
+      return new _deserializer2.default().deserialize(data);
     }
   }]);
 

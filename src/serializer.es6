@@ -1,5 +1,6 @@
 "use strict";
 import _ from 'lodash';
+import autobind from 'autobind-decorator'
 
 export default class Serializer {
   static Symbols = {Serialize: Symbol()};
@@ -82,6 +83,7 @@ export default class Serializer {
       || constructor === Array;
   }
 
+  @autobind
   _addInstance(originalObject, instance) {
     if (this._instancesMap.get(originalObject))
       return;
@@ -91,13 +93,15 @@ export default class Serializer {
     return reference;
   }
 
+  @autobind
   _map(obj) {
     if (obj instanceof Array)
-      return _.map(obj, this._mapValue.bind(this), this);
+      return _.map(obj, this._mapValue);
     else
-      return _.mapValues(obj, this._mapValue.bind(this), this);
+      return _.mapValues(obj, this._mapValue);
   }
 
+  @autobind
   _mapValue(value) {
     var typeCategory = getTypeCategory(value);
     if (typeCategory === "primitive")
@@ -113,6 +117,7 @@ export default class Serializer {
     }
   }
 
+  @autobind
   _mapObject(obj) {
     if (!this.isSerializableObject(obj)) {
       console.warn(`Object ${JSON.stringify(obj)} of constructor ${obj.constructor.toString()} is not a serializable object and will NOT be recorded!`);
@@ -128,6 +133,7 @@ export default class Serializer {
     return this.convertNativeTypeToDto(obj);
   }
 
+  @autobind
   _getInstance(instance) {
     return this._instancesMap.get(instance);
   }

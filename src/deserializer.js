@@ -3,20 +3,56 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = undefined;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _desc, _value, _class, _class2, _temp;
+
 var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
+
+var _autobindDecorator = require('autobind-decorator');
+
+var _autobindDecorator2 = _interopRequireDefault(_autobindDecorator);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Deserializer = function () {
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
+
+var Deserializer = (_class = (_temp = _class2 = function () {
   function Deserializer(jsonc) {
     _classCallCheck(this, Deserializer);
 
@@ -33,9 +69,9 @@ var Deserializer = function () {
       this.data = data;
       this.instances = this._map(this.data.instances, this._instantiateValue);
 
-      _lodash2.default.forEach(this.instances, this._restoreProperties, this);
+      _lodash2.default.forEach(this.instances, this._restoreProperties);
       this._restoreProperties(this.data.root);
-      _lodash2.default.forEach(this.objectsToPostProcess, this._postProcess, this);
+      _lodash2.default.forEach(this.objectsToPostProcess, this._postProcess);
 
       return this.data.root;
     }
@@ -91,7 +127,7 @@ var Deserializer = function () {
       var typeCategory = this._getTypeCategory(obj);
       if (typeCategory !== 'object') return;
 
-      _lodash2.default.forOwn(obj, this._restoreProperty, this);
+      _lodash2.default.forOwn(obj, this._restoreProperty);
     }
   }, {
     key: '_restoreProperty',
@@ -112,9 +148,7 @@ var Deserializer = function () {
   }]);
 
   return Deserializer;
-}();
-
-Deserializer.Symbols = { PostProcess: Symbol() };
+}(), _class2.Symbols = { PostProcess: Symbol() }, _temp), (_applyDecoratedDescriptor(_class.prototype, '_map', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_map'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_instantiateValue', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_instantiateValue'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_getTypeCategory', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_getTypeCategory'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_restoreProperties', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_restoreProperties'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_restoreProperty', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_restoreProperty'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_postProcess', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_postProcess'), _class.prototype)), _class);
 exports.default = Deserializer;
 
 //# sourceMappingURL=deserializer.js.map

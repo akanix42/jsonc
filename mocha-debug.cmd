@@ -1,0 +1,1 @@
+node-debug mocha --require source-map-support/register \"./**/*.tests.js\"
