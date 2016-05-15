@@ -11,6 +11,10 @@ var _json = require('json5');
 
 var _json2 = _interopRequireDefault(_json);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _serializer = require('./serializer');
 
 var _serializer2 = _interopRequireDefault(_serializer);
@@ -56,6 +60,17 @@ var Jsonc = function () {
     key: 'hasTypeName',
     value: function hasTypeName(typeName) {
       return typeName in this.registry;
+    }
+  }, {
+    key: 'getOptions',
+    value: function getOptions(typeName) {
+      var registration = this.registry[typeName];
+      if (!registration) return {};
+
+      var options = void 0;
+      var parentTypeName = registration.type.__proto__.__type__;
+      if (parentTypeName) options = _lodash2.default.merge(this.getOptions(parentTypeName), registration.options);else options = registration.options;
+      return options;
     }
   }, {
     key: 'stringify',

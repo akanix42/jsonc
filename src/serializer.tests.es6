@@ -53,7 +53,7 @@ describe('Serializer', () => {
     });
 
     it('serializes registered types', () => {
-      const mockJsonc = {hasType: () => true, registry: {'test': {}}};
+      const mockJsonc = {hasType: () => true, registry: {'test': {}}, getOptions: ()=>null};
       const serializer = new Serializer(mockJsonc);
       class TestClass {
         static __type__ = 'test';
@@ -75,7 +75,7 @@ describe('Serializer', () => {
     });
 
     it('allows serialization overriding of registered types via the Serializer.Symbols.Serialize property', () => {
-      const mockJsonc = {hasType: () => true, registry: {'test': {}}};
+      const mockJsonc = {hasType: () => true, registry: {'test': {}}, getOptions: ()=>null};
       const serializer = new Serializer(mockJsonc);
       class TestClass {
         static __type__ = 'test';
@@ -104,7 +104,8 @@ describe('Serializer', () => {
     });
 
     it('allows excluding specified properties from serialization', () => {
-      const mockJsonc = {hasType: () => true, registry: {'test': { options: { exclude: ['test']}}}};
+      const serializationOptions = {exclude: ['test']};
+      const mockJsonc = {hasType: () => true, getOptions: ()=>serializationOptions};
       const serializer = new Serializer(mockJsonc);
       class TestClass {
         static __type__ = 'test';
@@ -117,7 +118,8 @@ describe('Serializer', () => {
     });
 
     it('allows including only specified properties in serialization', () => {
-      const mockJsonc = {hasType: () => true, registry: {'test': { options: { include: ['test2']}}}};
+      const serializationOptions = {include: ['test2']};
+      const mockJsonc = {hasType: () => true, getOptions: ()=>serializationOptions};
       const serializer = new Serializer(mockJsonc);
       class TestClass {
         static __type__ = 'test';

@@ -85,8 +85,8 @@ var Serializer = (_class = (_temp = _class2 = function () {
 
       var data = Serializer.Symbols.Serialize in obj ? obj[Serializer.Symbols.Serialize]() : obj;
 
-      var registration = this.jsonc.registry[instance.__type__];
-      instance.__value__ = this._map(data, registration.options);
+      var options = this.jsonc.getOptions(instance.__type__);
+      instance.__value__ = this._map(data, options);
 
       return reference;
     }

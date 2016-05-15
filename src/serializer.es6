@@ -35,8 +35,8 @@ export default class Serializer {
       ? obj[Serializer.Symbols.Serialize]()
       : obj;
 
-    const registration = this.jsonc.registry[instance.__type__];
-    instance.__value__ = this._map(data, registration.options);
+    const options = this.jsonc.getOptions(instance.__type__);
+    instance.__value__ = this._map(data, options);
 
     return reference;
   }

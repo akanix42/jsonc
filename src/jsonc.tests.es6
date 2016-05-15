@@ -1,3 +1,5 @@
+'use strict';
+
 import "babel-polyfill";
 import chai from 'chai';
 import chaiThings from 'chai-things';
@@ -134,5 +136,34 @@ describe("Jsonc", () => {
       jsonc.register(TestClass, 'test', options);
       jsonc.registry['test'].options.should.equal(options);
     });
+
+    describe('.getOptions()', () => {
+      it('should return the registered options', () => {
+        class TestClass {
+        }
+        const options = { test: 'test'};
+
+        const jsonc = new Jsonc();
+        jsonc.register(TestClass, 'test', options);
+        jsonc.getOptions('test').test.should.equal(options.test);
+      });
+
+      it('should return the registered options merged with those of the parent', () => {
+        class ParentClass {
+        }
+        class ChildClass extends ParentClass {
+        }
+        const parentOptions = {exclude: ['test']};
+        const childOptions = {include: ['test2']};
+
+        const jsonc = new Jsonc();
+        jsonc.register(ParentClass, 'parent', parentOptions);
+        jsonc.register(ChildClass, 'child', childOptions);
+        const options = jsonc.getOptions('child');
+        options.exclude.should.equal(parentOptions.exclude);
+        options.include.should.eql(childOptions.include);
+      });
+    });
+
   });
 });

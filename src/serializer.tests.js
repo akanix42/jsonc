@@ -78,7 +78,9 @@ describe('Serializer', function () {
 
       var mockJsonc = { hasType: function hasType() {
           return true;
-        }, registry: { 'test': {} } };
+        }, registry: { 'test': {} }, getOptions: function getOptions() {
+          return null;
+        } };
       var serializer = new _serializer2.default(mockJsonc);
       var TestClass = (_temp = _class = function TestClass() {
         _classCallCheck(this, TestClass);
@@ -108,7 +110,9 @@ describe('Serializer', function () {
 
       var mockJsonc = { hasType: function hasType() {
           return true;
-        }, registry: { 'test': {} } };
+        }, registry: { 'test': {} }, getOptions: function getOptions() {
+          return null;
+        } };
       var serializer = new _serializer2.default(mockJsonc);
       var TestClass = (_temp2 = _class2 = function () {
         function TestClass() {
@@ -147,9 +151,12 @@ describe('Serializer', function () {
     it('allows excluding specified properties from serialization', function () {
       var _class3, _temp3;
 
+      var serializationOptions = { exclude: ['test'] };
       var mockJsonc = { hasType: function hasType() {
           return true;
-        }, registry: { 'test': { options: { exclude: ['test'] } } } };
+        }, getOptions: function getOptions() {
+          return serializationOptions;
+        } };
       var serializer = new _serializer2.default(mockJsonc);
       var TestClass = (_temp3 = _class3 = function TestClass() {
         _classCallCheck(this, TestClass);
@@ -166,9 +173,12 @@ describe('Serializer', function () {
     it('allows including only specified properties in serialization', function () {
       var _class4, _temp4;
 
+      var serializationOptions = { include: ['test2'] };
       var mockJsonc = { hasType: function hasType() {
           return true;
-        }, registry: { 'test': { options: { include: ['test2'] } } } };
+        }, getOptions: function getOptions() {
+          return serializationOptions;
+        } };
       var serializer = new _serializer2.default(mockJsonc);
       var TestClass = (_temp4 = _class4 = function TestClass() {
         _classCallCheck(this, TestClass);

@@ -1,5 +1,6 @@
 "use strict";
 import json5 from 'json5';
+import _ from 'lodash';
 import Serializer from './serializer';
 import Deserializer from './deserializer';
 
@@ -18,7 +19,7 @@ export default class Jsonc {
       return;
     }
 
-    this.registry[typeName] = { type, options };
+    this.registry[typeName] = {type, options};
     type.__type__ = typeName;
   }
 
@@ -28,6 +29,20 @@ export default class Jsonc {
 
   hasTypeName(typeName) {
     return typeName in this.registry;
+  }
+
+  getOptions(typeName) {
+    const registration = this.registry[typeName];
+    if (!registration)
+      return {};
+
+    let options;
+    const parentTypeName = registration.type.__proto__.__type__;
+    if (parentTypeName)
+      options = _.merge(this.getOptions(parentTypeName), registration.options);
+    else
+      options = registration.options;
+    return options;
   }
 
   stringify(data) {

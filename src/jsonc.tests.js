@@ -28,6 +28,10 @@ var _deserializer2 = _interopRequireDefault(_deserializer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 _chai2.default.should();
@@ -167,6 +171,48 @@ describe("Jsonc", function () {
       var jsonc = new _jsonc2.default();
       jsonc.register(TestClass, 'test', options);
       jsonc.registry['test'].options.should.equal(options);
+    });
+
+    describe('.getOptions()', function () {
+      it('should return the registered options', function () {
+        var TestClass = function TestClass() {
+          _classCallCheck(this, TestClass);
+        };
+
+        var options = { test: 'test' };
+
+        var jsonc = new _jsonc2.default();
+        jsonc.register(TestClass, 'test', options);
+        jsonc.getOptions('test').test.should.equal(options.test);
+      });
+
+      it('should return the registered options merged with those of the parent', function () {
+        var ParentClass = function ParentClass() {
+          _classCallCheck(this, ParentClass);
+        };
+
+        var ChildClass = function (_ParentClass) {
+          _inherits(ChildClass, _ParentClass);
+
+          function ChildClass() {
+            _classCallCheck(this, ChildClass);
+
+            return _possibleConstructorReturn(this, Object.getPrototypeOf(ChildClass).apply(this, arguments));
+          }
+
+          return ChildClass;
+        }(ParentClass);
+
+        var parentOptions = { exclude: ['test'] };
+        var childOptions = { include: ['test2'] };
+
+        var jsonc = new _jsonc2.default();
+        jsonc.register(ParentClass, 'parent', parentOptions);
+        jsonc.register(ChildClass, 'child', childOptions);
+        var options = jsonc.getOptions('child');
+        options.exclude.should.equal(parentOptions.exclude);
+        options.include.should.eql(childOptions.include);
+      });
     });
   });
 });
