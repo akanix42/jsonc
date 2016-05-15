@@ -131,9 +131,10 @@ describe("Jsonc", function () {
         _classCallCheck(this, TestClass);
       }, _class.__type__ = 'test', _temp);
 
+
       var jsonc = new _jsonc2.default();
       jsonc.register(TestClass);
-      jsonc.registry['test'].should.equal(TestClass);
+      jsonc.registry['test'].type.should.equal(TestClass);
     });
 
     it('registers the supplied "class" using the supplied type name', function () {
@@ -143,7 +144,7 @@ describe("Jsonc", function () {
 
       var jsonc = new _jsonc2.default();
       jsonc.register(TestClass, 'test');
-      jsonc.registry['test'].should.equal(TestClass);
+      jsonc.registry['test'].type.should.equal(TestClass);
     });
 
     it('should set the class\'s __type__ property to the supplied type name', function () {
@@ -154,6 +155,18 @@ describe("Jsonc", function () {
       var jsonc = new _jsonc2.default();
       jsonc.register(TestClass, 'test');
       TestClass.__type__.should.equal('test');
+    });
+
+    it('should register the options with the type', function () {
+      var TestClass = function TestClass() {
+        _classCallCheck(this, TestClass);
+      };
+
+      var options = {};
+
+      var jsonc = new _jsonc2.default();
+      jsonc.register(TestClass, 'test', options);
+      jsonc.registry['test'].options.should.equal(options);
     });
   });
 });

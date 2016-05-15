@@ -101,9 +101,10 @@ describe('Deserializer', function () {
         this.test = '123';
       }, _class.__type__ = 'test', _temp);
 
+
       var mockJsonc = { hasTypeName: function hasTypeName() {
           return true;
-        }, registry: { test: TestClass } };
+        }, registry: { test: { type: TestClass } } };
       var deserializer = new _deserializer2.default(mockJsonc);
       var input = { instances: [{ __type__: "test", __value__: { test: "123" } }], root: [{ __index__: 0 }] };
       var output = deserializer.deserialize(input);
@@ -131,9 +132,10 @@ describe('Deserializer', function () {
         return TestClass;
       }(), _class2.__type__ = 'test', _temp2);
 
+
       var mockJsonc = { hasTypeName: function hasTypeName() {
           return true;
-        }, registry: { test: TestClass } };
+        }, registry: { test: { type: TestClass } } };
       var deserializer = new _deserializer2.default(mockJsonc);
       var input = { instances: [{ __type__: "test", __value__: { test: "123" } }], root: [{ __index__: 0 }] };
       var output = deserializer.deserialize(input);

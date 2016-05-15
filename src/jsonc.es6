@@ -6,7 +6,7 @@ import Deserializer from './deserializer';
 export default class Jsonc {
   registry = {};
 
-  register(type, typeName) {
+  register(type, typeName, options) {
     typeName = typeName || type.__type__;
     if (!typeName) {
       console.error("Error registering type: no typename specified!");
@@ -14,11 +14,11 @@ export default class Jsonc {
     }
 
     if (this.hasTypeName(typeName)) {
-      console.error(`Error registering type: ${typeName} is already registered by ${this.registry[typeName].toString()}!`, type);
+      console.error(`Error registering type: ${typeName} is already registered by ${this.registry[typeName].type.toString()}!`, type);
       return;
     }
 
-    this.registry[typeName] = type;
+    this.registry[typeName] = { type, options };
     type.__type__ = typeName;
   }
 
@@ -39,10 +39,10 @@ export default class Jsonc {
   }
 
   serialize(data) {
-    return new Serializer().serialize(data);
+    return new Serializer(this).serialize(data);
   }
 
   deserialize(data) {
-    return new Deserializer().deserialize(data);
+    return new Deserializer(this).deserialize(data);
   }
 }

@@ -77,7 +77,7 @@ describe('Deserializer', () => {
         test = '123';
       }
 
-      const mockJsonc = {hasTypeName: () => true, registry: {test: TestClass}};
+      const mockJsonc = {hasTypeName: () => true, registry: {test: {type: TestClass}}};
       const deserializer = new Deserializer(mockJsonc);
       const input = {instances: [{__type__: "test", __value__: {test: "123"}}], root: [{__index__: 0}]};
       const output = deserializer.deserialize(input);
@@ -95,7 +95,7 @@ describe('Deserializer', () => {
         }
       }
 
-      const mockJsonc = {hasTypeName: () => true, registry: {test: TestClass}};
+      const mockJsonc = {hasTypeName: () => true, registry: {test: {type: TestClass}}};
       const deserializer = new Deserializer(mockJsonc);
       const input = {instances: [{__type__: "test", __value__: {test: "123"}}], root: [{__index__: 0}]};
       const output = deserializer.deserialize(input);

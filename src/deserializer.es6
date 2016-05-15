@@ -54,7 +54,7 @@ export default class Deserializer {
 
 
     function instantiateRegisteredType(obj) {
-      var instance = new this.jsonc.registry[obj.__type__]();
+      var instance = new this.jsonc.registry[obj.__type__].type();
       if (instance[Deserializer.Symbols.PostProcess])
         this.objectsToPostProcess.push(instance);
       return _.assign(instance, obj.__value__);

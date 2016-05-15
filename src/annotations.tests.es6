@@ -29,6 +29,20 @@ describe('Annotations', () => {
       wasCalledWithClassAndTypeName.should.be.true;
     });
 
+    it('should register the supplied class with options', () => {
+      const testTypeName = 'Test';
+      const testOptions = {};
+      let wasCalledWithAllArguments = false;
+      const mockJsonc = { register: (constructor, typeName, options) => wasCalledWithAllArguments = constructor.name ==='TestClass' && typeName === testTypeName && options === testOptions};
+      const { serializable } = annotations(mockJsonc);
+
+      @serializable(testTypeName, testOptions)
+      class TestClass {
+      }
+
+      wasCalledWithAllArguments.should.be.true;
+    });
+
     it('should throw an error if no class name is supplied', () => {
       const { serializable } = annotations();
 

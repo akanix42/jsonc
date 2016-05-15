@@ -85,7 +85,9 @@ var Serializer = (_class = (_temp = _class2 = function () {
 
       var data = Serializer.Symbols.Serialize in obj ? obj[Serializer.Symbols.Serialize]() : obj;
 
-      instance.__value__ = this._map(data);
+      var registration = this.jsonc.registry[instance.__type__];
+      instance.__value__ = this._map(data, registration.options);
+
       return reference;
     }
   }, {
@@ -139,8 +141,14 @@ var Serializer = (_class = (_temp = _class2 = function () {
     }
   }, {
     key: '_map',
-    value: function _map(obj) {
-      if (obj instanceof Array) return _lodash2.default.map(obj, this._mapValue);else return _lodash2.default.mapValues(obj, this._mapValue);
+    value: function _map(obj, options) {
+      if (obj instanceof Array) return _lodash2.default.map(obj, this._mapValue);else {
+        if (options) {
+          if (options.exclude) obj = _lodash2.default.omit(obj, options.exclude);
+          if (options.include) obj = _lodash2.default.pick(obj, options.include);
+        }
+        return _lodash2.default.mapValues(obj, this._mapValue);
+      }
     }
   }, {
     key: '_mapValue',

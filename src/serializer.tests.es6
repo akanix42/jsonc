@@ -53,7 +53,7 @@ describe('Serializer', () => {
     });
 
     it('serializes registered types', () => {
-      const mockJsonc = {hasType: () => true};
+      const mockJsonc = {hasType: () => true, registry: {'test': {}}};
       const serializer = new Serializer(mockJsonc);
       class TestClass {
         static __type__ = 'test';
@@ -75,7 +75,7 @@ describe('Serializer', () => {
     });
 
     it('allows serialization overriding of registered types via the Serializer.Symbols.Serialize property', () => {
-      const mockJsonc = {hasType: () => true};
+      const mockJsonc = {hasType: () => true, registry: {'test': {}}};
       const serializer = new Serializer(mockJsonc);
       class TestClass {
         static __type__ = 'test';
@@ -101,6 +101,33 @@ describe('Serializer', () => {
       const output = json5.stringify(serializer.serialize({obj}));
 
       output.should.equal('{instances:[{__type__:"__object__",__value__:{test:"123"}}],root:{obj:{__index__:0}}}');
+    });
+
+    it('allows excluding specified properties from serialization', () => {
+      const mockJsonc = {hasType: () => true, registry: {'test': { options: { exclude: ['test']}}}};
+      const serializer = new Serializer(mockJsonc);
+      class TestClass {
+        static __type__ = 'test';
+        test = '123';
+      }
+      const obj = new TestClass();
+      const output = json5.stringify(serializer.serialize([obj]));
+
+      output.should.equal('{instances:[{__type__:"test",__value__:{}}],root:[{__index__:0}]}');
+    });
+
+    it('allows including only specified properties in serialization', () => {
+      const mockJsonc = {hasType: () => true, registry: {'test': { options: { include: ['test2']}}}};
+      const serializer = new Serializer(mockJsonc);
+      class TestClass {
+        static __type__ = 'test';
+        test = '123';
+        test2 = '123';
+      }
+      const obj = new TestClass();
+      const output = json5.stringify(serializer.serialize([obj]));
+
+      output.should.equal('{instances:[{__type__:"test",__value__:{test2:"123"}}],root:[{__index__:0}]}');
     });
 
   });

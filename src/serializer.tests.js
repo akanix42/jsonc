@@ -78,7 +78,7 @@ describe('Serializer', function () {
 
       var mockJsonc = { hasType: function hasType() {
           return true;
-        } };
+        }, registry: { 'test': {} } };
       var serializer = new _serializer2.default(mockJsonc);
       var TestClass = (_temp = _class = function TestClass() {
         _classCallCheck(this, TestClass);
@@ -108,7 +108,7 @@ describe('Serializer', function () {
 
       var mockJsonc = { hasType: function hasType() {
           return true;
-        } };
+        }, registry: { 'test': {} } };
       var serializer = new _serializer2.default(mockJsonc);
       var TestClass = (_temp2 = _class2 = function () {
         function TestClass() {
@@ -142,6 +142,45 @@ describe('Serializer', function () {
       var output = _json2.default.stringify(serializer.serialize({ obj: obj }));
 
       output.should.equal('{instances:[{__type__:"__object__",__value__:{test:"123"}}],root:{obj:{__index__:0}}}');
+    });
+
+    it('allows excluding specified properties from serialization', function () {
+      var _class3, _temp3;
+
+      var mockJsonc = { hasType: function hasType() {
+          return true;
+        }, registry: { 'test': { options: { exclude: ['test'] } } } };
+      var serializer = new _serializer2.default(mockJsonc);
+      var TestClass = (_temp3 = _class3 = function TestClass() {
+        _classCallCheck(this, TestClass);
+
+        this.test = '123';
+      }, _class3.__type__ = 'test', _temp3);
+
+      var obj = new TestClass();
+      var output = _json2.default.stringify(serializer.serialize([obj]));
+
+      output.should.equal('{instances:[{__type__:"test",__value__:{}}],root:[{__index__:0}]}');
+    });
+
+    it('allows including only specified properties in serialization', function () {
+      var _class4, _temp4;
+
+      var mockJsonc = { hasType: function hasType() {
+          return true;
+        }, registry: { 'test': { options: { include: ['test2'] } } } };
+      var serializer = new _serializer2.default(mockJsonc);
+      var TestClass = (_temp4 = _class4 = function TestClass() {
+        _classCallCheck(this, TestClass);
+
+        this.test = '123';
+        this.test2 = '123';
+      }, _class4.__type__ = 'test', _temp4);
+
+      var obj = new TestClass();
+      var output = _json2.default.stringify(serializer.serialize([obj]));
+
+      output.should.equal('{instances:[{__type__:"test",__value__:{test2:"123"}}],root:[{__index__:0}]}');
     });
   });
 });

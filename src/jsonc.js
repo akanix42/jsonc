@@ -32,7 +32,7 @@ var Jsonc = function () {
 
   _createClass(Jsonc, [{
     key: 'register',
-    value: function register(type, typeName) {
+    value: function register(type, typeName, options) {
       typeName = typeName || type.__type__;
       if (!typeName) {
         console.error("Error registering type: no typename specified!");
@@ -40,11 +40,11 @@ var Jsonc = function () {
       }
 
       if (this.hasTypeName(typeName)) {
-        console.error('Error registering type: ' + typeName + ' is already registered by ' + this.registry[typeName].toString() + '!', type);
+        console.error('Error registering type: ' + typeName + ' is already registered by ' + this.registry[typeName].type.toString() + '!', type);
         return;
       }
 
-      this.registry[typeName] = type;
+      this.registry[typeName] = { type: type, options: options };
       type.__type__ = typeName;
     }
   }, {
@@ -70,12 +70,12 @@ var Jsonc = function () {
   }, {
     key: 'serialize',
     value: function serialize(data) {
-      return new _serializer2.default().serialize(data);
+      return new _serializer2.default(this).serialize(data);
     }
   }, {
     key: 'deserialize',
     value: function deserialize(data) {
-      return new _deserializer2.default().deserialize(data);
+      return new _deserializer2.default(this).deserialize(data);
     }
   }]);
 

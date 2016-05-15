@@ -104,7 +104,7 @@ describe("Jsonc", () => {
 
       const jsonc = new Jsonc();
       jsonc.register(TestClass);
-      jsonc.registry['test'].should.equal(TestClass);
+      jsonc.registry['test'].type.should.equal(TestClass);
     });
 
     it('registers the supplied "class" using the supplied type name', () => {
@@ -113,7 +113,7 @@ describe("Jsonc", () => {
 
       const jsonc = new Jsonc();
       jsonc.register(TestClass, 'test');
-      jsonc.registry['test'].should.equal(TestClass);
+      jsonc.registry['test'].type.should.equal(TestClass);
     });
 
     it(`should set the class's __type__ property to the supplied type name`, () => {
@@ -125,5 +125,14 @@ describe("Jsonc", () => {
       TestClass.__type__.should.equal('test');
     });
 
+    it('should register the options with the type', () => {
+      class TestClass {
+      }
+      const options = {};
+
+      const jsonc = new Jsonc();
+      jsonc.register(TestClass, 'test', options);
+      jsonc.registry['test'].options.should.equal(options);
+    });
   });
 });

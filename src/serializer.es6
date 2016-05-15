@@ -35,7 +35,9 @@ export default class Serializer {
       ? obj[Serializer.Symbols.Serialize]()
       : obj;
 
-    instance.__value__ = this._map(data);
+    const registration = this.jsonc.registry[instance.__type__];
+    instance.__value__ = this._map(data, registration.options);
+
     return reference;
   }
 
@@ -94,11 +96,18 @@ export default class Serializer {
   }
 
   @autobind
-  _map(obj) {
+  _map(obj, options) {
     if (obj instanceof Array)
       return _.map(obj, this._mapValue);
-    else
+    else {
+      if (options) {
+        if (options.exclude)
+          obj = _.omit(obj, options.exclude);
+        if (options.include)
+          obj = _.pick(obj, options.include);
+      }
       return _.mapValues(obj, this._mapValue);
+    }
   }
 
   @autobind

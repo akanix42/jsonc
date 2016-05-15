@@ -104,7 +104,7 @@ var Deserializer = (_class = (_temp = _class2 = function () {
       return value;
 
       function instantiateRegisteredType(obj) {
-        var instance = new this.jsonc.registry[obj.__type__]();
+        var instance = new this.jsonc.registry[obj.__type__].type();
         if (instance[Deserializer.Symbols.PostProcess]) this.objectsToPostProcess.push(instance);
         return _lodash2.default.assign(instance, obj.__value__);
       }
