@@ -1,5 +1,9 @@
 'use strict';
 
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
 require('babel-polyfill');
 
 var _chai = require('chai');
@@ -15,8 +19,6 @@ var _autobindDecorator = require('autobind-decorator');
 var _autobindDecorator2 = _interopRequireDefault(_autobindDecorator);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 _chai2.default.should();
 
@@ -42,7 +44,7 @@ describe('Annotations', function () {
 
       var serializable = _annotations.serializable;
       var TestClass = (_dec = serializable(testTypeName), _dec(_class = function TestClass() {
-        _classCallCheck(this, TestClass);
+        (0, _classCallCheck3.default)(this, TestClass);
       }) || _class);
 
 
@@ -63,7 +65,7 @@ describe('Annotations', function () {
 
       var serializable = _annotations2.serializable;
       var TestClass = (_dec2 = serializable(testTypeName, testOptions), _dec2(_class2 = function TestClass() {
-        _classCallCheck(this, TestClass);
+        (0, _classCallCheck3.default)(this, TestClass);
       }) || _class2);
 
 
@@ -89,7 +91,7 @@ describe('Annotations', function () {
         var _class3;
 
         var TestClass = serializable(_class3 = function TestClass() {
-          _classCallCheck(this, TestClass);
+          (0, _classCallCheck3.default)(this, TestClass);
         }) || _class3;
       } catch (ex) {
         ex.message.should.match(/type name must be supplied/);

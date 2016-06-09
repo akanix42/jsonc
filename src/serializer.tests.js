@@ -1,6 +1,16 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
+
+var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
 require('babel-polyfill');
 
@@ -17,10 +27,6 @@ var _serializer = require('./serializer');
 var _serializer2 = _interopRequireDefault(_serializer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 _chai2.default.should();
 
@@ -83,8 +89,7 @@ describe('Serializer', function () {
         } };
       var serializer = new _serializer2.default(mockJsonc);
       var TestClass = (_temp = _class = function TestClass() {
-        _classCallCheck(this, TestClass);
-
+        (0, _classCallCheck3.default)(this, TestClass);
         this.test = '123';
       }, _class.__type__ = 'test', _temp);
 
@@ -116,16 +121,15 @@ describe('Serializer', function () {
       var serializer = new _serializer2.default(mockJsonc);
       var TestClass = (_temp2 = _class2 = function () {
         function TestClass() {
-          _classCallCheck(this, TestClass);
+          (0, _classCallCheck3.default)(this, TestClass);
         }
 
-        _createClass(TestClass, [{
+        (0, _createClass3.default)(TestClass, [{
           key: _serializer2.default.Symbols.Serialize,
           value: function value() {
             return { test: '123' };
           }
         }]);
-
         return TestClass;
       }(), _class2.__type__ = 'test', _temp2);
 
@@ -140,7 +144,7 @@ describe('Serializer', function () {
           return false;
         } };
       var serializer = new _serializer2.default(mockJsonc);
-      var obj = _defineProperty({}, _serializer2.default.Symbols.Serialize, function () {
+      var obj = (0, _defineProperty3.default)({}, _serializer2.default.Symbols.Serialize, function () {
         return { test: '123' };
       });
       var output = _json2.default.stringify(serializer.serialize({ obj: obj }));
@@ -159,8 +163,7 @@ describe('Serializer', function () {
         } };
       var serializer = new _serializer2.default(mockJsonc);
       var TestClass = (_temp3 = _class3 = function TestClass() {
-        _classCallCheck(this, TestClass);
-
+        (0, _classCallCheck3.default)(this, TestClass);
         this.test = '123';
       }, _class3.__type__ = 'test', _temp3);
 
@@ -181,8 +184,7 @@ describe('Serializer', function () {
         } };
       var serializer = new _serializer2.default(mockJsonc);
       var TestClass = (_temp4 = _class4 = function TestClass() {
-        _classCallCheck(this, TestClass);
-
+        (0, _classCallCheck3.default)(this, TestClass);
         this.test = '123';
         this.test2 = '123';
       }, _class4.__type__ = 'test', _temp4);

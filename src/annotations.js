@@ -4,9 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = annotations;
-
-require('babel-polyfill');
-
 function annotations(jsonc) {
   return {
     serializable: function serializable(typeName, options) {

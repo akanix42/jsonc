@@ -5,9 +5,33 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _getOwnPropertyDescriptor = require('babel-runtime/core-js/object/get-own-property-descriptor');
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getOwnPropertyDescriptor2 = _interopRequireDefault(_getOwnPropertyDescriptor);
+
+var _symbol = require('babel-runtime/core-js/symbol');
+
+var _symbol2 = _interopRequireDefault(_symbol);
+
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _typeof2 = require('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _map2 = require('babel-runtime/core-js/map');
+
+var _map3 = _interopRequireDefault(_map2);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _desc, _value, _class, _class2, _temp;
 
@@ -20,8 +44,6 @@ var _autobindDecorator = require('autobind-decorator');
 var _autobindDecorator2 = _interopRequireDefault(_autobindDecorator);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
   var desc = {};
@@ -54,15 +76,14 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 
 var Serializer = (_class = (_temp = _class2 = function () {
   function Serializer(jsonc) {
-    _classCallCheck(this, Serializer);
-
-    this._instancesMap = new Map();
+    (0, _classCallCheck3.default)(this, Serializer);
+    this._instancesMap = new _map3.default();
     this._instances = [];
 
     this.jsonc = jsonc;
   }
 
-  _createClass(Serializer, [{
+  (0, _createClass3.default)(Serializer, [{
     key: 'serialize',
     value: function serialize(data) {
       this.data = data;
@@ -158,7 +179,7 @@ var Serializer = (_class = (_temp = _class2 = function () {
       if (typeCategory === "object") return this._mapObject(value);
 
       function getTypeCategory(value) {
-        var type = typeof value === 'undefined' ? 'undefined' : _typeof(value);
+        var type = typeof value === 'undefined' ? 'undefined' : (0, _typeof3.default)(value);
         if (type === "function" || value !== null && type === "object") return type;
         return "primitive";
       }
@@ -167,7 +188,7 @@ var Serializer = (_class = (_temp = _class2 = function () {
     key: '_mapObject',
     value: function _mapObject(obj) {
       if (!this.isSerializableObject(obj)) {
-        console.warn('Object ' + JSON.stringify(obj) + ' of constructor ' + obj.constructor.toString() + ' is not a serializable object and will NOT be recorded!');
+        console.warn('Object ' + (0, _stringify2.default)(obj) + ' of constructor ' + obj.constructor.toString() + ' is not a serializable object and will NOT be recorded!');
         return null;
       }
 
@@ -183,9 +204,8 @@ var Serializer = (_class = (_temp = _class2 = function () {
       return this._instancesMap.get(instance);
     }
   }]);
-
   return Serializer;
-}(), _class2.Symbols = { Serialize: Symbol() }, _temp), (_applyDecoratedDescriptor(_class.prototype, '_addInstance', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_addInstance'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_map', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_map'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_mapValue', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_mapValue'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_mapObject', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_mapObject'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_getInstance', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_getInstance'), _class.prototype)), _class);
+}(), _class2.Symbols = { Serialize: (0, _symbol2.default)() }, _temp), (_applyDecoratedDescriptor(_class.prototype, '_addInstance', [_autobindDecorator2.default], (0, _getOwnPropertyDescriptor2.default)(_class.prototype, '_addInstance'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_map', [_autobindDecorator2.default], (0, _getOwnPropertyDescriptor2.default)(_class.prototype, '_map'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_mapValue', [_autobindDecorator2.default], (0, _getOwnPropertyDescriptor2.default)(_class.prototype, '_mapValue'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_mapObject', [_autobindDecorator2.default], (0, _getOwnPropertyDescriptor2.default)(_class.prototype, '_mapObject'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_getInstance', [_autobindDecorator2.default], (0, _getOwnPropertyDescriptor2.default)(_class.prototype, '_getInstance'), _class.prototype)), _class);
 exports.default = Serializer;
 
 //# sourceMappingURL=serializer.js.map

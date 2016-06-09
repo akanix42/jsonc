@@ -1,5 +1,21 @@
 'use strict';
 
+var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = require('babel-runtime/helpers/inherits');
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
 require('babel-polyfill');
 
 var _chai = require('chai');
@@ -27,12 +43,6 @@ var _deserializer = require('./deserializer');
 var _deserializer2 = _interopRequireDefault(_deserializer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 _chai2.default.should();
 _chai2.default.use(_chaiThings2.default);
@@ -132,7 +142,7 @@ describe("Jsonc", function () {
       var _class, _temp;
 
       var TestClass = (_temp = _class = function TestClass() {
-        _classCallCheck(this, TestClass);
+        (0, _classCallCheck3.default)(this, TestClass);
       }, _class.__type__ = 'test', _temp);
 
 
@@ -143,7 +153,7 @@ describe("Jsonc", function () {
 
     it('registers the supplied "class" using the supplied type name', function () {
       var TestClass = function TestClass() {
-        _classCallCheck(this, TestClass);
+        (0, _classCallCheck3.default)(this, TestClass);
       };
 
       var jsonc = new _jsonc2.default();
@@ -153,7 +163,7 @@ describe("Jsonc", function () {
 
     it('should set the class\'s __type__ property to the supplied type name', function () {
       var TestClass = function TestClass() {
-        _classCallCheck(this, TestClass);
+        (0, _classCallCheck3.default)(this, TestClass);
       };
 
       var jsonc = new _jsonc2.default();
@@ -163,7 +173,7 @@ describe("Jsonc", function () {
 
     it('should register the options with the type', function () {
       var TestClass = function TestClass() {
-        _classCallCheck(this, TestClass);
+        (0, _classCallCheck3.default)(this, TestClass);
       };
 
       var options = {};
@@ -176,7 +186,7 @@ describe("Jsonc", function () {
     describe('.getOptions()', function () {
       it('should return the registered options', function () {
         var TestClass = function TestClass() {
-          _classCallCheck(this, TestClass);
+          (0, _classCallCheck3.default)(this, TestClass);
         };
 
         var options = { test: 'test' };
@@ -188,16 +198,15 @@ describe("Jsonc", function () {
 
       it('should return the registered options merged with those of the parent', function () {
         var ParentClass = function ParentClass() {
-          _classCallCheck(this, ParentClass);
+          (0, _classCallCheck3.default)(this, ParentClass);
         };
 
         var ChildClass = function (_ParentClass) {
-          _inherits(ChildClass, _ParentClass);
+          (0, _inherits3.default)(ChildClass, _ParentClass);
 
           function ChildClass() {
-            _classCallCheck(this, ChildClass);
-
-            return _possibleConstructorReturn(this, Object.getPrototypeOf(ChildClass).apply(this, arguments));
+            (0, _classCallCheck3.default)(this, ChildClass);
+            return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(ChildClass).apply(this, arguments));
           }
 
           return ChildClass;

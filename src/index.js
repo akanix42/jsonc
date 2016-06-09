@@ -5,8 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.serializable = undefined;
 
-require('babel-polyfill');
-
 var _annotations = require('./annotations');
 
 var _annotations2 = _interopRequireDefault(_annotations);
@@ -19,6 +17,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var jsonc = new _jsonc2.default();
 exports.default = jsonc;
+
 
 var annotations = new _annotations2.default(jsonc);
 var serializable = annotations.serializable;

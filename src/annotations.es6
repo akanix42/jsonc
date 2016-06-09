@@ -1,5 +1,3 @@
-import 'babel-polyfill';
-
 export default function annotations(jsonc) {
   return {
     serializable(typeName, options) {

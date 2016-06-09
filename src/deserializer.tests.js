@@ -1,6 +1,12 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
 require('babel-polyfill');
 
@@ -17,8 +23,6 @@ var _deserializer = require('./deserializer');
 var _deserializer2 = _interopRequireDefault(_deserializer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 _chai2.default.should();
 _chai2.default.use(_chaiThings2.default);
@@ -96,8 +100,7 @@ describe('Deserializer', function () {
       var _class, _temp;
 
       var TestClass = (_temp = _class = function TestClass() {
-        _classCallCheck(this, TestClass);
-
+        (0, _classCallCheck3.default)(this, TestClass);
         this.test = '123';
       }, _class.__type__ = 'test', _temp);
 
@@ -117,18 +120,16 @@ describe('Deserializer', function () {
 
       var TestClass = (_temp2 = _class2 = function () {
         function TestClass() {
-          _classCallCheck(this, TestClass);
-
+          (0, _classCallCheck3.default)(this, TestClass);
           this.test = '123';
         }
 
-        _createClass(TestClass, [{
+        (0, _createClass3.default)(TestClass, [{
           key: _deserializer2.default.Symbols.PostProcess,
           value: function value() {
             this.test = 'cats!';
           }
         }]);
-
         return TestClass;
       }(), _class2.__type__ = 'test', _temp2);
 

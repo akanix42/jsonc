@@ -1,5 +1,3 @@
-import "babel-polyfill";
-
 import Annotations from './annotations';
 import Jsonc from './jsonc';
 
