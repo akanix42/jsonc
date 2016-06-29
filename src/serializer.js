@@ -13,10 +13,6 @@ var _symbol = require('babel-runtime/core-js/symbol');
 
 var _symbol2 = _interopRequireDefault(_symbol);
 
-var _stringify = require('babel-runtime/core-js/json/stringify');
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
 var _typeof3 = _interopRequireDefault(_typeof2);
@@ -188,7 +184,8 @@ var Serializer = (_class = (_temp = _class2 = function () {
     key: '_mapObject',
     value: function _mapObject(obj) {
       if (!this.isSerializableObject(obj)) {
-        console.warn('Object ' + (0, _stringify2.default)(obj) + ' of constructor ' + obj.constructor.toString() + ' is not a serializable object and will NOT be recorded!');
+        console.warn('The following object of constructor ' + obj.constructor.toString() + ' is not a serializable object and will NOT be recorded!');
+        console.dir(obj);
         return null;
       }
 

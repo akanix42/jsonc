@@ -129,7 +129,8 @@ export default class Serializer {
   @autobind
   _mapObject(obj) {
     if (!this.isSerializableObject(obj)) {
-      console.warn(`Object ${JSON.stringify(obj)} of constructor ${obj.constructor.toString()} is not a serializable object and will NOT be recorded!`);
+      console.warn(`The following object of constructor ${obj.constructor.toString()} is not a serializable object and will NOT be recorded!`);
+      console.dir(obj);
       return null;
     }
 
