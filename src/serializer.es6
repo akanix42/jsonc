@@ -4,7 +4,11 @@ import autobind from 'autobind-decorator'
 
 export default class Serializer {
   static Symbols = {Serialize: Symbol()};
-
+  _nativeTypeMap = new Map([
+    [Array, this.convertNativeArrayToDto.bind(this)],
+    [Map, this.convertNativeMapToDto.bind(this)],
+    [Set, this.convertNativeSetToDto.bind(this)],
+  ]);
   _instancesMap = new Map();
   _instances = [];
 
@@ -61,16 +65,40 @@ export default class Serializer {
   }
 
   convertNativeTypeToDto(obj) {
-    var reference = this._getInstance(obj);
+    let reference = this._getInstance(obj);
     if (reference)
       return reference;
 
+    const convertToDto = this._nativeTypeMap.get(obj.constructor);
+    return convertToDto(obj);
+  }
+
+  convertNativeArrayToDto(obj) {
     var instance = {
       __type__: "__array__"
     };
-    reference = this._addInstance(obj, instance);
-
+    const reference = this._addInstance(obj, instance);
     instance.__value__ = this._map(obj);
+
+    return reference;
+  }
+
+  convertNativeMapToDto(obj) {
+    var instance = {
+      __type__: "__native_map__"
+    };
+    const reference = this._addInstance(obj, instance);
+    instance.__value__ = this._map([...obj]);
+
+    return reference;
+  }
+
+  convertNativeSetToDto(obj) {
+    var instance = {
+      __type__: "__native_set__"
+    };
+    const reference = this._addInstance(obj, instance);
+    instance.__value__ = this._map([...obj]);
 
     return reference;
   }
@@ -82,7 +110,7 @@ export default class Serializer {
     var constructor = obj.constructor;
     return (this.jsonc.hasType(constructor))
       || constructor === Object
-      || constructor === Array;
+      || this._nativeTypeMap.has(constructor);
   }
 
   @autobind

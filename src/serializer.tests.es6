@@ -43,6 +43,22 @@ describe('Serializer', () => {
       output.should.equal('{instances:[],root:[1,2]}');
     });
 
+    it('serializes a Map', () => {
+      const mockJsonc = {hasType: () => false};
+      const serializer = new Serializer(mockJsonc);
+      const output = json5.stringify(serializer.serialize([new Map([[1,2]])]));
+
+      output.should.equal('{instances:[{__type__:"__native_map__",__value__:[{__index__:1}]},{__type__:"__array__",__value__:[1,2]}],root:[{__index__:0}]}');
+    });
+
+    it('serializes a Set', () => {
+      const mockJsonc = {hasType: () => false};
+      const serializer = new Serializer(mockJsonc);
+      const output = json5.stringify(serializer.serialize([new Set([1, 2])]));
+
+      output.should.equal('{instances:[{__type__:"__native_set__",__value__:[1,2]}],root:[{__index__:0}]}');
+    });
+
     it('serializes nested objects', () => {
       const mockJsonc = {hasType: () => false};
       const serializer = new Serializer(mockJsonc);

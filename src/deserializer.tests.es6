@@ -49,6 +49,26 @@ describe('Deserializer', () => {
       output.should.eql([1, 2]);
     });
 
+    it('deserializes a Map', () => {
+      const mockJsonc = {hasTypeName: () => false};
+      const deserializer = new Deserializer(mockJsonc);
+      const input = {instances:[{__type__:"__native_map__",__value__:[{__index__:1}]},{__type__:"__array__",__value__:[1,2]}],root:[{__index__:0}]};
+      const output = deserializer.deserialize(input);
+
+      output[0].should.be.an.instanceOf(Map);
+      [...output[0]].should.eql([[1, 2]]);
+    });
+
+    it('deserializes a Set', () => {
+      const mockJsonc = {hasTypeName: () => false};
+      const deserializer = new Deserializer(mockJsonc);
+      const input = {instances:[{__type__:"__native_set__",__value__:[1,2]}],root:[{__index__:0}]};
+      const output = deserializer.deserialize(input);
+
+      output[0].should.be.an.instanceOf(Set);
+      [...output[0]].should.eql([1, 2]);
+    });
+
     it('deserializes nested objects', () => {
       const mockJsonc = {hasTypeName: () => false};
       const deserializer = new Deserializer(mockJsonc);

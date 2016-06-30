@@ -8,6 +8,12 @@ export default class Deserializer {
   data = null;
   instances = null;
   objectsToPostProcess = [];
+  _nativeTypeMap = new Map([
+    ['__object__', this.convertDtoToNativeObject.bind(this)],
+    ['__array__', this.convertDtoToNativeArray.bind(this)],
+    ['__native_map__', this.convertDtoToNativeMap.bind(this)],
+    ['__native_set__', this.convertDtoToNativeSet.bind(this)],
+  ]);
 
   constructor(jsonc) {
     this.jsonc = jsonc;
@@ -35,7 +41,7 @@ export default class Deserializer {
   @autobind
   _instantiateValue(value) {
     const isRegisteredType = (obj) => '__type__' in obj && obj.__type__ && this.jsonc.hasTypeName(obj.__type__);
-    const isNativeType = (obj) => '__type__' in obj && (obj.__type__ === '__object__' || obj.__type__ === '__array__');
+    const isNativeType = (obj) => '__type__' in obj && this._nativeTypeMap.has(obj.__type__);
 
     const typeCategory = this._getTypeCategory(value);
     if (typeCategory === 'function')
@@ -61,11 +67,25 @@ export default class Deserializer {
     }
 
     function instantiateNativeType(obj) {
-      var instance = obj.__type__ === '__object__'
-        ? {}
-        : [];
-      return _.assign(instance, obj.__value__);
+      return this._nativeTypeMap.get(obj.__type__)(obj);
     }
+
+  }
+
+  convertDtoToNativeObject(obj) {
+    return _.assign({}, obj.__value__);
+  }
+
+  convertDtoToNativeArray(obj) {
+    return _.assign([], obj.__value__);
+  }
+
+  convertDtoToNativeMap(obj) {
+    return new Map([obj.__value__]);
+  }
+
+  convertDtoToNativeSet(obj) {
+    return new Set(obj.__value__);
   }
 
   @autobind
@@ -81,8 +101,19 @@ export default class Deserializer {
     const typeCategory = this._getTypeCategory(obj);
     if (typeCategory !== 'object')
       return;
+    if (obj instanceof Map)
+      this._restoreMapPairs(obj);
+    else
+      _.forOwn(obj, this._restoreProperty);
+  }
 
-    _.forOwn(obj, this._restoreProperty);
+  _restoreMapPairs(obj) {
+    const keys = [...obj.keys()];
+    keys.forEach(key=> {
+      obj.delete(key);
+      const instance = this.instances[key.__index__];
+      obj.set(instance[0], instance[1]);
+    });
   }
 
   @autobind
