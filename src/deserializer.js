@@ -5,26 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
-var _getOwnPropertyDescriptor = require('babel-runtime/core-js/object/get-own-property-descriptor');
-
-var _getOwnPropertyDescriptor2 = _interopRequireDefault(_getOwnPropertyDescriptor);
-
-var _symbol = require('babel-runtime/core-js/symbol');
-
-var _symbol2 = _interopRequireDefault(_symbol);
-
-var _typeof2 = require('babel-runtime/helpers/typeof');
-
-var _typeof3 = _interopRequireDefault(_typeof2);
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
 var _desc, _value, _class, _class2, _temp;
 
 var _lodash = require('lodash');
@@ -66,101 +46,107 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-var Deserializer = (_class = (_temp = _class2 = function () {
-  function Deserializer(jsonc) {
-    (0, _classCallCheck3.default)(this, Deserializer);
+let Deserializer = (_class = (_temp = _class2 = class Deserializer {
+
+  constructor(jsonc) {
     this.data = null;
     this.instances = null;
     this.objectsToPostProcess = [];
+    this._nativeTypeMap = new Map([['__object__', this.convertDtoToNativeObject.bind(this)], ['__array__', this.convertDtoToNativeArray.bind(this)], ['__native_map__', this.convertDtoToNativeMap.bind(this)], ['__native_set__', this.convertDtoToNativeSet.bind(this)]]);
 
     this.jsonc = jsonc;
   }
 
-  (0, _createClass3.default)(Deserializer, [{
-    key: 'deserialize',
-    value: function deserialize(data) {
-      this.data = data;
-      this.instances = this._map(this.data.instances, this._instantiateValue);
+  deserialize(data) {
+    this.data = data;
+    this.instances = this._map(this.data.instances, this._instantiateValue);
 
-      _lodash2.default.forEach(this.instances, this._restoreProperties);
-      this._restoreProperties(this.data.root);
-      _lodash2.default.forEach(this.objectsToPostProcess, this._postProcess);
+    _lodash2.default.forEach(this.instances, this._restoreProperties);
+    this._restoreProperties(this.data.root);
+    _lodash2.default.forEach(this.objectsToPostProcess, this._postProcess);
 
-      return this.data.root;
+    return this.data.root;
+  }
+
+  _map(obj, fn) {
+    if (obj instanceof Array) return _lodash2.default.map(obj, fn, this);else return _lodash2.default.mapValues(obj, fn, this);
+  }
+
+  _instantiateValue(value) {
+    const isRegisteredType = obj => '__type__' in obj && obj.__type__ && this.jsonc.hasTypeName(obj.__type__);
+    const isNativeType = obj => '__type__' in obj && this._nativeTypeMap.has(obj.__type__);
+
+    const typeCategory = this._getTypeCategory(value);
+    if (typeCategory === 'function') return undefined;
+
+    if (typeCategory === 'primitive') return value;
+
+    if (isRegisteredType(value)) return instantiateRegisteredType.call(this, value);
+
+    if (isNativeType(value)) return instantiateNativeType.call(this, value);
+
+    return value;
+
+    function instantiateRegisteredType(obj) {
+      var instance = new this.jsonc.registry[obj.__type__].type();
+      if (instance[Deserializer.Symbols.PostProcess]) this.objectsToPostProcess.push(instance);
+      return _lodash2.default.assign(instance, obj.__value__);
     }
-  }, {
-    key: '_map',
-    value: function _map(obj, fn) {
-      if (obj instanceof Array) return _lodash2.default.map(obj, fn, this);else return _lodash2.default.mapValues(obj, fn, this);
+
+    function instantiateNativeType(obj) {
+      return this._nativeTypeMap.get(obj.__type__)(obj);
     }
-  }, {
-    key: '_instantiateValue',
-    value: function _instantiateValue(value) {
-      var _this = this;
+  }
 
-      var isRegisteredType = function isRegisteredType(obj) {
-        return '__type__' in obj && obj.__type__ && _this.jsonc.hasTypeName(obj.__type__);
-      };
-      var isNativeType = function isNativeType(obj) {
-        return '__type__' in obj && (obj.__type__ === '__object__' || obj.__type__ === '__array__');
-      };
+  convertDtoToNativeObject(obj) {
+    return _lodash2.default.assign({}, obj.__value__);
+  }
 
-      var typeCategory = this._getTypeCategory(value);
-      if (typeCategory === 'function') return undefined;
+  convertDtoToNativeArray(obj) {
+    return _lodash2.default.assign([], obj.__value__);
+  }
 
-      if (typeCategory === 'primitive') return value;
+  convertDtoToNativeMap(obj) {
+    return new Map([obj.__value__]);
+  }
 
-      if (isRegisteredType(value)) return instantiateRegisteredType.call(this, value);
+  convertDtoToNativeSet(obj) {
+    return new Set(obj.__value__);
+  }
 
-      if (isNativeType(value)) return instantiateNativeType.call(this, value);
+  _getTypeCategory(value) {
+    const type = typeof value;
+    if (type === 'function' || value !== null && type === 'object') return type;
+    return 'primitive';
+  }
 
-      return value;
+  _restoreProperties(obj) {
+    const typeCategory = this._getTypeCategory(obj);
+    if (typeCategory !== 'object') return;
+    if (obj instanceof Map) this._restoreMapPairs(obj);else _lodash2.default.forOwn(obj, this._restoreProperty);
+  }
 
-      function instantiateRegisteredType(obj) {
-        var instance = new this.jsonc.registry[obj.__type__].type();
-        if (instance[Deserializer.Symbols.PostProcess]) this.objectsToPostProcess.push(instance);
-        return _lodash2.default.assign(instance, obj.__value__);
-      }
+  _restoreMapPairs(obj) {
+    const keys = [...obj.keys()];
+    keys.forEach(key => {
+      obj.delete(key);
+      const instance = this.instances[key.__index__];
+      obj.set(instance[0], instance[1]);
+    });
+  }
 
-      function instantiateNativeType(obj) {
-        var instance = obj.__type__ === '__object__' ? {} : [];
-        return _lodash2.default.assign(instance, obj.__value__);
-      }
-    }
-  }, {
-    key: '_getTypeCategory',
-    value: function _getTypeCategory(value) {
-      var type = typeof value === 'undefined' ? 'undefined' : (0, _typeof3.default)(value);
-      if (type === 'function' || value !== null && type === 'object') return type;
-      return 'primitive';
-    }
-  }, {
-    key: '_restoreProperties',
-    value: function _restoreProperties(obj) {
-      var typeCategory = this._getTypeCategory(obj);
-      if (typeCategory !== 'object') return;
+  _restoreProperty(value, key, obj) {
+    const isReference = obj => '__index__' in obj;
+    const typeCategory = this._getTypeCategory(value);
+    if (typeCategory !== 'object') return;
 
-      _lodash2.default.forOwn(obj, this._restoreProperty);
-    }
-  }, {
-    key: '_restoreProperty',
-    value: function _restoreProperty(value, key, obj) {
-      var isReference = function isReference(obj) {
-        return '__index__' in obj;
-      };
-      var typeCategory = this._getTypeCategory(value);
-      if (typeCategory !== 'object') return;
+    if (isReference(value)) obj[key] = this.instances[value.__index__];
+  }
 
-      if (isReference(value)) obj[key] = this.instances[value.__index__];
-    }
-  }, {
-    key: '_postProcess',
-    value: function _postProcess(obj) {
-      obj[Deserializer.Symbols.PostProcess]();
-    }
-  }]);
-  return Deserializer;
-}(), _class2.Symbols = { PostProcess: (0, _symbol2.default)() }, _temp), (_applyDecoratedDescriptor(_class.prototype, '_map', [_autobindDecorator2.default], (0, _getOwnPropertyDescriptor2.default)(_class.prototype, '_map'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_instantiateValue', [_autobindDecorator2.default], (0, _getOwnPropertyDescriptor2.default)(_class.prototype, '_instantiateValue'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_getTypeCategory', [_autobindDecorator2.default], (0, _getOwnPropertyDescriptor2.default)(_class.prototype, '_getTypeCategory'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_restoreProperties', [_autobindDecorator2.default], (0, _getOwnPropertyDescriptor2.default)(_class.prototype, '_restoreProperties'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_restoreProperty', [_autobindDecorator2.default], (0, _getOwnPropertyDescriptor2.default)(_class.prototype, '_restoreProperty'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_postProcess', [_autobindDecorator2.default], (0, _getOwnPropertyDescriptor2.default)(_class.prototype, '_postProcess'), _class.prototype)), _class);
+  _postProcess(obj) {
+    obj[Deserializer.Symbols.PostProcess]();
+  }
+}, _class2.Symbols = { PostProcess: Symbol() }, _temp), (_applyDecoratedDescriptor(_class.prototype, '_map', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_map'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_instantiateValue', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_instantiateValue'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_getTypeCategory', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_getTypeCategory'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_restoreProperties', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_restoreProperties'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_restoreProperty', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_restoreProperty'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_postProcess', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_postProcess'), _class.prototype)), _class);
 exports.default = Deserializer;
 
 //# sourceMappingURL=deserializer.js.map

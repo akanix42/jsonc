@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = annotations;
 function annotations(jsonc) {
   return {
-    serializable: function serializable(typeName, options) {
+    serializable(typeName, options) {
       if (!typeName) throw new Error('type name must be supplied');
       if (!options) options = {};
 

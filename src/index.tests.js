@@ -18,13 +18,13 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-describe('index', function () {
+describe('index', () => {
 
-  it('should export a Jsonc instance', function () {
+  it('should export a Jsonc instance', () => {
     _exports.default.should.be.instanceof(_jsonc2.default);
   });
 
-  it('should export the serializable annotation', function () {
+  it('should export the serializable annotation', () => {
     _exports.should.have.property('serializable');
   });
 });

@@ -9,7 +9,7 @@ var _deserializer = require('./deserializer');
 
 Object.defineProperty(exports, 'Deserializer', {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return _interopRequireDefault(_deserializer).default;
   }
 });
@@ -24,12 +24,12 @@ var _jsonc2 = _interopRequireDefault(_jsonc);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var jsonc = new _jsonc2.default();
+const jsonc = new _jsonc2.default();
 exports.default = jsonc;
 
 
-var annotations = new _annotations2.default(jsonc);
-var serializable = annotations.serializable;
+const annotations = new _annotations2.default(jsonc);
+let { serializable } = annotations;
 exports.serializable = serializable;
 
 //# sourceMappingURL=index.js.map
