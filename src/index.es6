@@ -5,7 +5,7 @@ const jsonc = new Jsonc();
 export default jsonc;
 
 const annotations = new Annotations(jsonc);
-export let { serializable } = annotations;
+let { serializable } = annotations;
+export { serializable };
 
 export { default as Deserializer } from './deserializer';
-
