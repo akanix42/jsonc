@@ -1,6 +1,8 @@
-import chai from 'chai';
 import Jsonc from './jsonc';
 import jsonc, * as exports from './index';
+
+import chai from 'chai';
+chai.should();
 
 describe('index', () => {
 
