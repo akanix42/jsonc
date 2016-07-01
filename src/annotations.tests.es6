@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import chai from 'chai';
 import annotations from './annotations';
 import autobind from 'autobind-decorator'

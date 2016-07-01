@@ -1,6 +1,5 @@
 'use strict';
 
-require('babel-polyfill');
 
 var _chai = require('chai');
 

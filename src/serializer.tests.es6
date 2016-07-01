@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import chai from 'chai';
 import json5 from 'json5';
 import Serializer from './serializer';

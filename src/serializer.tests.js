@@ -1,7 +1,5 @@
 'use strict';
 
-require('babel-polyfill');
-
 var _chai = require('chai');
 
 var _chai2 = _interopRequireDefault(_chai);

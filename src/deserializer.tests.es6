@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import chai from 'chai';
 import chaiThings from 'chai-things';
 import Deserializer from './deserializer';

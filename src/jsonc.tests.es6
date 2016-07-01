@@ -1,6 +1,5 @@
 'use strict';
 
-import "babel-polyfill";
 import chai from 'chai';
 import chaiThings from 'chai-things';
 import json5 from 'json5';
