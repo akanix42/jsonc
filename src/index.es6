@@ -4,8 +4,8 @@ import Jsonc from './jsonc';
 const jsonc = new Jsonc();
 export default jsonc;
 
-const annotations = new Annotations(jsonc);
-let { serializable } = annotations;
-export { serializable };
+import setJsonc from './annotations';
+setJsonc(jsonc);
+export * from './annotations';
 
 export { default as Deserializer } from './deserializer';
