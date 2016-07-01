@@ -65,7 +65,7 @@ let Deserializer = (_class = (_temp = _class2 = class Deserializer {
     this._restoreProperties(this.data.root);
     _lodash2.default.forEach(this.objectsToPostProcess, this._postProcess);
 
-    return this.data.root;
+    return this.data.root[0];
   }
 
   _map(obj, fn) {

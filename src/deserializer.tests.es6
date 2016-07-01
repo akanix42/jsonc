@@ -3,46 +3,52 @@ import chaiThings from 'chai-things';
 import Deserializer from './deserializer';
 
 chai.should();
+const expect = chai.expect;
 chai.use(chaiThings);
 
 describe('Deserializer', () => {
   describe('.deserialize()', () => {
 
     it('deserializes empty objects', () => {
-      const deserializer = new Deserializer();
-      const input = {instances: [], root: {}};
+      const mockJsonc = {hasTypeName: () => false};
+      const deserializer = new Deserializer(mockJsonc);
+      const input = {instances: [{__type__: "__object__", __value__: {}}], root: [{__index__: 0}]};
       const output = deserializer.deserialize(input);
 
       output.should.eql({});
     });
 
     it('deserializes string properties', () => {
-      const deserializer = new Deserializer();
-      const input = {instances: [], root: {a: 'test'}};
+      const mockJsonc = {hasTypeName: () => false};
+      const deserializer = new Deserializer(mockJsonc);
+      const input = {instances: [{__type__: "__object__", __value__: {a: "test"}}], root: [{__index__: 0}]};
       const output = deserializer.deserialize(input);
 
       output.should.eql({a: 'test'});
     });
 
     it('deserializes boolean properties', () => {
-      const deserializer = new Deserializer();
-      const input = {instances: [], root: {a: true}};
+      const mockJsonc = {hasTypeName: () => false};
+      const deserializer = new Deserializer(mockJsonc);
+      const input = {instances: [{__type__: "__object__", __value__: {a: true}}], root: [{__index__: 0}]};
       const output = deserializer.deserialize(input);
 
       output.should.eql({a: true});
     });
 
     it('deserializes number properties', () => {
-      const deserializer = new Deserializer();
-      const input = {instances: [], root: {a: 1}};
+      const mockJsonc = {hasTypeName: () => false};
+      const deserializer = new Deserializer(mockJsonc);
+      const input = {instances: [{__type__: "__object__", __value__: {a: 1}}], root: [{__index__: 0}]};
       const output = deserializer.deserialize(input);
 
       output.should.eql({a: 1});
     });
 
-    it('deserializes an array', () => {
-      const deserializer = new Deserializer();
-      const input = {instances: [], root: [1, 2]};
+    it('deserializes an Array', () => {
+      const mockJsonc = {hasTypeName: () => false};
+      const deserializer = new Deserializer(mockJsonc);
+      const input = {instances: [{__type__: "__array__", __value__: [1, 2]}], root: [{__index__: 0}]};
       const output = deserializer.deserialize(input);
 
       output.should.eql([1, 2]);
@@ -51,27 +57,37 @@ describe('Deserializer', () => {
     it('deserializes a Map', () => {
       const mockJsonc = {hasTypeName: () => false};
       const deserializer = new Deserializer(mockJsonc);
-      const input = {instances:[{__type__:"__native_map__",__value__:[{__index__:1}]},{__type__:"__array__",__value__:[1,2]}],root:[{__index__:0}]};
+      const input = {
+        instances: [{__type__: "__native_map__", __value__: [{__index__: 1}]}, {
+          __type__: "__array__",
+          __value__: [1, 2]
+        }], root: [{__index__: 0}]
+      };
       const output = deserializer.deserialize(input);
 
-      output[0].should.be.an.instanceOf(Map);
-      [...output[0]].should.eql([[1, 2]]);
+      output.should.be.an.instanceOf(Map);
+      [...output].should.eql([[1, 2]]);
     });
 
     it('deserializes a Set', () => {
       const mockJsonc = {hasTypeName: () => false};
       const deserializer = new Deserializer(mockJsonc);
-      const input = {instances:[{__type__:"__native_set__",__value__:[1,2]}],root:[{__index__:0}]};
+      const input = {instances: [{__type__: "__native_set__", __value__: [1, 2]}], root: [{__index__: 0}]};
       const output = deserializer.deserialize(input);
 
-      output[0].should.be.an.instanceOf(Set);
-      [...output[0]].should.eql([1, 2]);
+      output.should.be.an.instanceOf(Set);
+      [...output].should.eql([1, 2]);
     });
 
     it('deserializes nested objects', () => {
       const mockJsonc = {hasTypeName: () => false};
       const deserializer = new Deserializer(mockJsonc);
-      const input = {instances: [{__type__: "__object__", __value__: {c: "test"}}], root: {a: 1, b: {__index__: 0}}};
+      const input = {
+        instances: [{
+          __type__: "__object__",
+          __value__: {a: 1, b: {__index__: 1}}
+        }, {__type__: "__object__", __value__: {c: "test"}}], root: [{__index__: 0}]
+      };
       const output = deserializer.deserialize(input);
 
       output.should.eql({a: 1, b: {c: 'test'}});
@@ -81,8 +97,10 @@ describe('Deserializer', () => {
       const mockJsonc = {hasTypeName: () => false};
       const deserializer = new Deserializer(mockJsonc);
       const input = {
-        instances: [{__type__: "__object__", __value__: {}}],
-        root: [{__index__: 0}, {__index__: 0}, {__index__: 0}]
+        instances: [{
+          __type__: "__array__",
+          __value__: [{__index__: 1}, {__index__: 1}, {__index__: 1}]
+        }, {__type__: "__object__", __value__: {}}], root: [{__index__: 0}]
       };
       const output = deserializer.deserialize(input);
 
@@ -101,7 +119,8 @@ describe('Deserializer', () => {
       const input = {instances: [{__type__: "test", __value__: {test: "123"}}], root: [{__index__: 0}]};
       const output = deserializer.deserialize(input);
 
-      output[0].should.be.an.instanceOf(TestClass);
+      output.should.be.an.instanceOf(TestClass);
+      expect(output.test).to.equal('123');
     });
 
     it('allows post-processing of registered types via the Deserializer.Symbols.PostProcess property', () => {
@@ -119,7 +138,7 @@ describe('Deserializer', () => {
       const input = {instances: [{__type__: "test", __value__: {test: "123"}}], root: [{__index__: 0}]};
       const output = deserializer.deserialize(input);
 
-      output[0].test.should.equal('cats!');
+      output.test.should.equal('cats!');
     });
 
   });

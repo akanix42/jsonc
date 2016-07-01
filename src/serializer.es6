@@ -17,7 +17,7 @@ export default class Serializer {
   }
 
   serialize(data) {
-    this.data = data;
+    this.data = [data];
     return {
       instances: this._instances,
       root: this._map(this.data)

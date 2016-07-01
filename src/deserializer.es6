@@ -27,7 +27,7 @@ export default class Deserializer {
     this._restoreProperties(this.data.root);
     _.forEach(this.objectsToPostProcess, this._postProcess);
 
-    return this.data.root;
+    return this.data.root[0];
   }
 
   @autobind
