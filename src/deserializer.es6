@@ -41,20 +41,22 @@ export default class Deserializer {
   @autobind
   _instantiateValue(value) {
     const isRegisteredType = (obj) => '__type__' in obj && obj.__type__ && this.jsonc.hasTypeName(obj.__type__);
+    const isFunction = (obj) => '__fn__' in obj;
     const isNativeType = (obj) => '__type__' in obj && this._nativeTypeMap.has(obj.__type__);
 
     const typeCategory = this._getTypeCategory(value);
-    if (typeCategory === 'function')
-      return undefined;
 
     if (typeCategory === 'primitive')
       return value;
 
-    if (isRegisteredType(value))
-      return instantiateRegisteredType.call(this, value);
+    if (typeCategory === 'object') {
+      if (isRegisteredType(value))
+        return instantiateRegisteredType.call(this, value);
 
-    if (isNativeType(value))
-      return instantiateNativeType.call(this, value);
+      if (isNativeType(value))
+        return instantiateNativeType.call(this, value);
+    } else if (typeCategory === 'function')
+      return this._restoreRegisteredFunction(value);
 
     return value;
 
@@ -89,6 +91,16 @@ export default class Deserializer {
     return instance;
   }
 
+  _restoreRegisteredFunction(obj) {
+    const fn = this.jsonc.fnReverseRegistry.get(obj.__fn__);
+    if (!fn) {
+      console.warn(`Unable to restore function ${obj.__fn__}: function not registered!`);
+      return;
+    }
+
+    return fn;
+  }
+
   convertDtoToNativeMap(obj) {
     return new Map([obj.__value__]);
   }
@@ -101,13 +113,15 @@ export default class Deserializer {
   _getTypeCategory(value) {
     const type = typeof value;
     if (type === 'function' || (value !== null && type === 'object'))
-      return type;
+      return value.__fn__ ? 'function' : type;
     return 'primitive';
   }
 
   @autobind
   _restoreProperties(obj) {
     const typeCategory = this._getTypeCategory(obj);
+    if (typeCategory === 'function')
+      return this._restoreRegisteredFunction(obj);
     if (typeCategory !== 'object')
       return;
     if (obj instanceof Map)
@@ -129,6 +143,8 @@ export default class Deserializer {
   _restoreProperty(value, key, obj) {
     const isReference = (obj) => '__index__' in obj;
     const typeCategory = this._getTypeCategory(value);
+    if (typeCategory === 'function')
+      obj[key] = this._restoreRegisteredFunction(value);
     if (typeCategory !== 'object')
       return;
 

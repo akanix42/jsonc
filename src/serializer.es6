@@ -154,12 +154,14 @@ export default class Serializer {
       return value;
     if (typeCategory === "object")
       return this._mapObject(value);
+    if (typeCategory === 'function')
+      return this._mapFunction(value);
 
     function getTypeCategory(value) {
       var type = typeof value;
-      if (type === "function" || (value !== null && type === "object"))
+      if (type === 'function' || (value !== null && type === 'object'))
         return type;
-      return "primitive";
+      return 'primitive';
     }
   }
 
@@ -178,6 +180,14 @@ export default class Serializer {
       return this.convertPlainObjectToDto(obj);
 
     return this.convertNativeTypeToDto(obj);
+  }
+
+  @autobind
+  _mapFunction(fn) {
+    const key = this.jsonc.fnRegistry.get(fn);
+    if (!key) return;
+
+    return {__fn__: key};
   }
 
   @autobind

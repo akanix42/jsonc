@@ -3,7 +3,7 @@ import annotations from './annotations';
 import autobind from 'autobind-decorator'
 
 chai.should();
-
+const expect = chai.expect;
 
 describe('Annotations', () => {
   describe('serializable', () => {
@@ -58,6 +58,27 @@ describe('Annotations', () => {
       } catch (ex) {
         ex.message.should.match(/type name must be supplied/);
       }
+    });
+  });
+  describe('include', () => {
+    it('should register the function', (done) => {
+
+      const mockJsonc = {
+        registerFunction: (fn, type, key) => {
+          expect(fn).to.be.a('function');
+          expect(fn.name).to.equal('testFunction');
+          expect(type.constructor.name).to.equal('TestClass');
+          expect(key).to.equal('testFunction');
+          done();
+        }
+      };
+      const {include} = annotations(mockJsonc);
+
+      class TestClass {
+        @include
+        testFunction(){}
+      }
+
     });
   });
 });

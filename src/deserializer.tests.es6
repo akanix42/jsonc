@@ -148,13 +148,52 @@ describe('Deserializer', () => {
 
       const mockJsonc = {hasTypeName: () => true, registry: {test: {type: TestClass}}};
       const deserializer = new Deserializer(mockJsonc);
-      const input = {instances:[{__type__:"test",__value__:{__array__:[1,2],__props__:{test:"123"}}}],root:[{__index__:0}]};
+      const input = {
+        instances: [{__type__: "test", __value__: {__array__: [1, 2], __props__: {test: "123"}}}],
+        root: [{__index__: 0}]
+      };
       const output = deserializer.deserialize(input);
 
       expect(output).to.be.an.instanceOf(TestClass);
       expect(output.test).to.equal('123');
       expect(output[0]).to.equal(1);
       expect(output[1]).to.equal(2);
+    });
+
+    it('deserializes registered functions', () => {
+      function testFunction() {
+        return 'hello world';
+      }
+
+      const mockJsonc = {fnReverseRegistry: new Map([['test', testFunction]])};
+      const deserializer = new Deserializer(mockJsonc);
+      const input = {instances: [], root: [{__fn__: "test"}]};
+      const output = deserializer.deserialize(input);
+      expect(output).to.equal(testFunction);
+    });
+
+    it('deserializes registered functions of registered types', () => {
+      class TestClass {
+        static __type__ = 'test';
+        test = '123';
+
+        testFunction() {
+
+        }
+      }
+      
+      const mockJsonc = {
+        hasTypeName: (typeName) => typeName === 'test',
+        registry: {test: {type: TestClass}},
+        fnReverseRegistry: new Map([['test.test', TestClass.prototype.testFunction]])
+      };
+      const deserializer = new Deserializer(mockJsonc);
+      const input = {instances:[{__type__:"__object__",__value__:{obj:{__index__:1},test:{__fn__:"test.test"}}},{__type__:"test",__value__:{test:"123"}}],root:[{__index__:0}]};
+      const output = deserializer.deserialize(input);
+
+      expect(output.test).to.equal(TestClass.prototype.testFunction);
+      expect(output.obj).to.be.an.instanceOf(TestClass);
+      expect(output.obj.test).to.equal('123');
     });
 
     it('allows post-processing of registered types via the Deserializer.Symbols.PostProcess property', () => {

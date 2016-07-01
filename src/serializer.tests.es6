@@ -3,6 +3,7 @@ import json5 from 'json5';
 import Serializer from './serializer';
 
 chai.should();
+const expect = chai.expect;
 
 describe('Serializer', () => {
   describe('.serialize()', () => {
@@ -110,6 +111,41 @@ describe('Serializer', () => {
       output.should.equal('{instances:[{__type__:"test",__value__:{__array__:[1,2],__props__:{test:"123"}}}],root:[{__index__:0}]}');
     });
 
+    it('serializes registered functions', () => {
+      function testFunction() {
+        return 'hello world';
+      }
+
+      const mockJsonc = {hasType: () => true, fnRegistry: new Map([[testFunction, 'test']])};
+      const serializer = new Serializer(mockJsonc);
+
+      const output = json5.stringify(serializer.serialize(testFunction));
+      expect(output).to.equal('{instances:[],root:[{__fn__:"test"}]}');
+    });
+
+    it('serializes registered functions of registered types', () => {
+      class TestClass {
+        static __type__ = 'test';
+        test = '123';
+
+        testFunction() {
+
+        }
+      }
+
+      const mockJsonc = {
+        hasType: () => true,
+        fnRegistry: new Map([[TestClass.prototype.testFunction, 'test.test']]),
+        registry: {'test': {}},
+        getOptions: ()=>null
+      };
+      const serializer = new Serializer(mockJsonc);
+      const obj = new TestClass();
+      const obj2 = {obj: obj, test: obj.testFunction};
+      const output = json5.stringify(serializer.serialize(obj2));
+      expect(output).to.equal('{instances:[{__type__:"__object__",__value__:{obj:{__index__:1},test:{__fn__:"test.test"}}},{__type__:"test",__value__:{test:"123"}}],root:[{__index__:0}]}');
+    });
+
     it('stores references to an object instead of multiple copies', () => {
       const mockJsonc = {hasType: () => false};
       const serializer = new Serializer(mockJsonc);
@@ -178,4 +214,5 @@ describe('Serializer', () => {
     });
 
   });
-});
+})
+;

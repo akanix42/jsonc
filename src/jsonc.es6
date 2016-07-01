@@ -6,6 +6,8 @@ import Deserializer from './deserializer';
 
 export default class Jsonc {
   registry = {};
+  fnRegistry = new Map();
+  fnReverseRegistry = new Map();
 
   register(type, typeName, options) {
     typeName = typeName || type.__type__;
@@ -21,6 +23,12 @@ export default class Jsonc {
 
     this.registry[typeName] = {type, options};
     type.__type__ = typeName;
+  }
+
+  registerFunction(fn, type, key) {
+    const combinedKey = `${type.__type__}.${key}`;
+    this.fnRegistry.set(fn, combinedKey);
+    this.fnReverseRegistry.set(combinedKey, fn);
   }
 
   hasType(type) {
