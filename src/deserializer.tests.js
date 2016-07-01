@@ -66,6 +66,20 @@ describe('Deserializer', () => {
       output.should.eql([1, 2]);
     });
 
+    it('deserializes an Array with extra properties', () => {
+      const mockJsonc = { hasTypeName: () => false };
+      const deserializer = new _deserializer2.default(mockJsonc);
+      const input = {
+        instances: [{ __type__: "__array__", __value__: { __array__: [1, 2], __props__: { test: "123" } } }],
+        root: [{ __index__: 0 }]
+      };
+      const output = deserializer.deserialize(input);
+
+      const array = [1, 2];
+      array.test = '123';
+      output.should.eql(array);
+    });
+
     it('deserializes a Map', () => {
       const mockJsonc = { hasTypeName: () => false };
       const deserializer = new _deserializer2.default(mockJsonc);
@@ -138,6 +152,33 @@ describe('Deserializer', () => {
 
       output.should.be.an.instanceOf(TestClass);
       expect(output.test).to.equal('123');
+    });
+
+    it('deserializes registered types that extend Array', () => {
+      var _class2, _temp3;
+
+      let TestClass = (_temp3 = _class2 = class TestClass extends Array {
+        constructor(...args) {
+          var _temp2;
+
+          return _temp2 = super(...args), this.test = '123', _temp2;
+        }
+
+      }, _class2.__type__ = 'test', _temp3);
+
+      const obj = new TestClass();
+      obj.push(1);
+      obj.push(2);
+
+      const mockJsonc = { hasTypeName: () => true, registry: { test: { type: TestClass } } };
+      const deserializer = new _deserializer2.default(mockJsonc);
+      const input = { instances: [{ __type__: "test", __value__: { __array__: [1, 2], __props__: { test: "123" } } }], root: [{ __index__: 0 }] };
+      const output = deserializer.deserialize(input);
+
+      expect(output).to.be.an.instanceOf(TestClass);
+      expect(output.test).to.equal('123');
+      expect(output[0]).to.equal(1);
+      expect(output[1]).to.equal(2);
     });
 
     it('allows post-processing of registered types via the Deserializer.Symbols.PostProcess property', () => {

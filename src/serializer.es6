@@ -125,9 +125,18 @@ export default class Serializer {
 
   @autobind
   _map(obj, options) {
-    if (obj instanceof Array)
-      return _.map(obj, this._mapValue);
+    if (obj instanceof Array) {
+      const props = Object.keys(obj).filter(key=>key.match(/^\D+$/));
+      const array = _.map(obj, this._mapValue);
+      if (props && props.length)
+        return {__array__: array, __props__: mapObject.call(this, _.pick(obj, props))};
+      return array;
+    }
     else {
+      return mapObject.call(this, obj);
+    }
+
+    function mapObject(obj) {
       if (options) {
         if (options.exclude)
           obj = _.omit(obj, options.exclude);

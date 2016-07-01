@@ -152,7 +152,16 @@ let Serializer = (_class = (_temp = _class2 = class Serializer {
   }
 
   _map(obj, options) {
-    if (obj instanceof Array) return _lodash2.default.map(obj, this._mapValue);else {
+    if (obj instanceof Array) {
+      const props = Object.keys(obj).filter(key => key.match(/^\D+$/));
+      const array = _lodash2.default.map(obj, this._mapValue);
+      if (props && props.length) return { __array__: array, __props__: mapObject.call(this, _lodash2.default.pick(obj, props)) };
+      return array;
+    } else {
+      return mapObject.call(this, obj);
+    }
+
+    function mapObject(obj) {
       if (options) {
         if (options.exclude) obj = _lodash2.default.omit(obj, options.exclude);
         if (options.include) obj = _lodash2.default.pick(obj, options.include);

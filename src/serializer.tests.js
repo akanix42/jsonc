@@ -59,6 +59,17 @@ describe('Serializer', () => {
       output.should.equal('{instances:[{__type__:"__array__",__value__:[1,2]}],root:[{__index__:0}]}');
     });
 
+    it('serializes an Array with extra properties', () => {
+      const mockJsonc = { hasType: () => false };
+      const serializer = new _serializer2.default(mockJsonc);
+
+      const array = [1, 2];
+      array.test = '123';
+      const output = _json2.default.stringify(serializer.serialize(array));
+
+      output.should.equal('{instances:[{__type__:"__array__",__value__:{__array__:[1,2],__props__:{test:"123"}}}],root:[{__index__:0}]}');
+    });
+
     it('serializes a Map', () => {
       const mockJsonc = { hasType: () => false };
       const serializer = new _serializer2.default(mockJsonc);
@@ -100,6 +111,27 @@ describe('Serializer', () => {
       const output = _json2.default.stringify(serializer.serialize(obj));
 
       output.should.equal('{instances:[{__type__:"test",__value__:{test:"123"}}],root:[{__index__:0}]}');
+    });
+
+    it('serializes registered types that extend Array', () => {
+      var _class2, _temp3;
+
+      const mockJsonc = { hasType: () => true, registry: { 'test': {} }, getOptions: () => null };
+      const serializer = new _serializer2.default(mockJsonc);
+      let TestClass = (_temp3 = _class2 = class TestClass extends Array {
+        constructor(...args) {
+          var _temp2;
+
+          return _temp2 = super(...args), this.test = '123', _temp2;
+        }
+
+      }, _class2.__type__ = 'test', _temp3);
+
+      const obj = new TestClass();
+      obj.push(1);
+      obj.push(2);
+      const output = _json2.default.stringify(serializer.serialize(obj));
+      output.should.equal('{instances:[{__type__:"test",__value__:{__array__:[1,2],__props__:{test:"123"}}}],root:[{__index__:0}]}');
     });
 
     it('stores references to an object instead of multiple copies', () => {

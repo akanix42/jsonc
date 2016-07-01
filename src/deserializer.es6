@@ -63,7 +63,7 @@ export default class Deserializer {
       var instance = new this.jsonc.registry[obj.__type__].type();
       if (instance[Deserializer.Symbols.PostProcess])
         this.objectsToPostProcess.push(instance);
-      return _.assign(instance, obj.__value__);
+      return this.restoreInstance(instance, obj);
     }
 
     function instantiateNativeType(obj) {
@@ -77,7 +77,16 @@ export default class Deserializer {
   }
 
   convertDtoToNativeArray(obj) {
-    return _.assign([], obj.__value__);
+    return this.restoreInstance([], obj);
+  }
+
+  restoreInstance(instance, obj) {
+    const data = obj.__value__.__array__ || obj.__value__;
+    _.assign(instance, data);
+    if (obj.__value__.__props__)
+      _.assign(instance, obj.__value__.__props__);
+
+    return instance;
   }
 
   convertDtoToNativeMap(obj) {

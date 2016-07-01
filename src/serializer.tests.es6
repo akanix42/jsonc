@@ -47,6 +47,17 @@ describe('Serializer', () => {
       output.should.equal('{instances:[{__type__:"__array__",__value__:[1,2]}],root:[{__index__:0}]}');
     });
 
+    it('serializes an Array with extra properties', () => {
+      const mockJsonc = {hasType: () => false};
+      const serializer = new Serializer(mockJsonc);
+
+      const array = [1, 2];
+      array.test = '123';
+      const output = json5.stringify(serializer.serialize(array));
+
+      output.should.equal('{instances:[{__type__:"__array__",__value__:{__array__:[1,2],__props__:{test:"123"}}}],root:[{__index__:0}]}');
+    });
+
     it('serializes a Map', () => {
       const mockJsonc = {hasType: () => false};
       const serializer = new Serializer(mockJsonc);
@@ -83,6 +94,20 @@ describe('Serializer', () => {
       const output = json5.stringify(serializer.serialize(obj));
 
       output.should.equal('{instances:[{__type__:"test",__value__:{test:"123"}}],root:[{__index__:0}]}');
+    });
+
+    it('serializes registered types that extend Array', () => {
+      const mockJsonc = {hasType: () => true, registry: {'test': {}}, getOptions: ()=>null};
+      const serializer = new Serializer(mockJsonc);
+      class TestClass extends Array {
+        static __type__ = 'test';
+        test = '123';
+      }
+      const obj = new TestClass();
+      obj.push(1);
+      obj.push(2);
+      const output = json5.stringify(serializer.serialize(obj));
+      output.should.equal('{instances:[{__type__:"test",__value__:{__array__:[1,2],__props__:{test:"123"}}}],root:[{__index__:0}]}');
     });
 
     it('stores references to an object instead of multiple copies', () => {

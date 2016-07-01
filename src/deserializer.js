@@ -90,7 +90,7 @@ let Deserializer = (_class = (_temp = _class2 = class Deserializer {
     function instantiateRegisteredType(obj) {
       var instance = new this.jsonc.registry[obj.__type__].type();
       if (instance[Deserializer.Symbols.PostProcess]) this.objectsToPostProcess.push(instance);
-      return _lodash2.default.assign(instance, obj.__value__);
+      return this.restoreInstance(instance, obj);
     }
 
     function instantiateNativeType(obj) {
@@ -103,7 +103,15 @@ let Deserializer = (_class = (_temp = _class2 = class Deserializer {
   }
 
   convertDtoToNativeArray(obj) {
-    return _lodash2.default.assign([], obj.__value__);
+    return this.restoreInstance([], obj);
+  }
+
+  restoreInstance(instance, obj) {
+    const data = obj.__value__.__array__ || obj.__value__;
+    _lodash2.default.assign(instance, data);
+    if (obj.__value__.__props__) _lodash2.default.assign(instance, obj.__value__.__props__);
+
+    return instance;
   }
 
   convertDtoToNativeMap(obj) {
