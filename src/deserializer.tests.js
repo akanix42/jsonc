@@ -172,7 +172,10 @@ describe('Deserializer', () => {
 
       const mockJsonc = { hasTypeName: () => true, registry: { test: { type: TestClass } } };
       const deserializer = new _deserializer2.default(mockJsonc);
-      const input = { instances: [{ __type__: "test", __value__: { __array__: [1, 2], __props__: { test: "123" } } }], root: [{ __index__: 0 }] };
+      const input = {
+        instances: [{ __type__: "test", __value__: { __array__: [1, 2], __props__: { test: "123" } } }],
+        root: [{ __index__: 0 }]
+      };
       const output = deserializer.deserialize(input);
 
       expect(output).to.be.an.instanceOf(TestClass);
@@ -181,7 +184,19 @@ describe('Deserializer', () => {
       expect(output[1]).to.equal(2);
     });
 
-    it('allows post-processing of registered types via the Deserializer.Symbols.PostProcess property', () => {
+    it('deserializes registered functions', () => {
+      function testFunction() {
+        return 'hello world';
+      }
+
+      const mockJsonc = { fnReverseRegistry: new Map([['test', testFunction]]) };
+      const deserializer = new _deserializer2.default(mockJsonc);
+      const input = { instances: [], root: [{ __fn__: "test" }] };
+      const output = deserializer.deserialize(input);
+      expect(output).to.equal(testFunction);
+    });
+
+    it('deserializes registered functions of registered types', () => {
       var _class3, _temp4;
 
       let TestClass = (_temp4 = _class3 = class TestClass {
@@ -189,10 +204,36 @@ describe('Deserializer', () => {
           this.test = '123';
         }
 
+        testFunction() {}
+      }, _class3.__type__ = 'test', _temp4);
+
+
+      const mockJsonc = {
+        hasTypeName: typeName => typeName === 'test',
+        registry: { test: { type: TestClass } },
+        fnReverseRegistry: new Map([['test.test', TestClass.prototype.testFunction]])
+      };
+      const deserializer = new _deserializer2.default(mockJsonc);
+      const input = { instances: [{ __type__: "__object__", __value__: { obj: { __index__: 1 }, test: { __fn__: "test.test" } } }, { __type__: "test", __value__: { test: "123" } }], root: [{ __index__: 0 }] };
+      const output = deserializer.deserialize(input);
+
+      expect(output.test).to.equal(TestClass.prototype.testFunction);
+      expect(output.obj).to.be.an.instanceOf(TestClass);
+      expect(output.obj.test).to.equal('123');
+    });
+
+    it('allows post-processing of registered types via the Deserializer.Symbols.PostProcess property', () => {
+      var _class4, _temp5;
+
+      let TestClass = (_temp5 = _class4 = class TestClass {
+        constructor() {
+          this.test = '123';
+        }
+
         [_deserializer2.default.Symbols.PostProcess]() {
           this.test = 'cats!';
         }
-      }, _class3.__type__ = 'test', _temp4);
+      }, _class4.__type__ = 'test', _temp5);
 
 
       const mockJsonc = { hasTypeName: () => true, registry: { test: { type: TestClass } } };

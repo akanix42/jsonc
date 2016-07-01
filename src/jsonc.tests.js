@@ -27,6 +27,7 @@ var _deserializer2 = _interopRequireDefault(_deserializer);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _chai2.default.should();
+const expect = _chai2.default.expect;
 _chai2.default.use(_chaiThings2.default);
 
 describe("Jsonc", () => {
@@ -176,6 +177,24 @@ describe("Jsonc", () => {
         options.exclude.should.equal(parentOptions.exclude);
         options.include.should.eql(childOptions.include);
       });
+    });
+  });
+
+  describe('.registerFn()', () => {
+    it('registers the supplied fn of the registered class', () => {
+      var _class2, _temp2;
+
+      let TestClass = (_temp2 = _class2 = class TestClass {
+
+        testFunction() {}
+      }, _class2.__type__ = 'test', _temp2);
+
+
+      const jsonc = new _jsonc2.default();
+      jsonc.register(TestClass);
+      jsonc.registerFunction(TestClass.prototype.testFunction, TestClass, 'test');
+      expect(jsonc.fnRegistry.get(TestClass.prototype.testFunction)).to.equal('test.test');
+      expect(jsonc.fnReverseRegistry.get('test.test')).to.equal(TestClass.prototype.testFunction);
     });
   });
 });

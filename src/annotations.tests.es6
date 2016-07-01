@@ -1,6 +1,5 @@
 import chai from 'chai';
 import annotations from './annotations';
-import autobind from 'autobind-decorator'
 
 chai.should();
 const expect = chai.expect;

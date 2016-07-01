@@ -174,11 +174,12 @@ let Serializer = (_class = (_temp = _class2 = class Serializer {
     var typeCategory = getTypeCategory(value);
     if (typeCategory === "primitive") return value;
     if (typeCategory === "object") return this._mapObject(value);
+    if (typeCategory === 'function') return this._mapFunction(value);
 
     function getTypeCategory(value) {
       var type = typeof value;
-      if (type === "function" || value !== null && type === "object") return type;
-      return "primitive";
+      if (type === 'function' || value !== null && type === 'object') return type;
+      return 'primitive';
     }
   }
 
@@ -196,10 +197,17 @@ let Serializer = (_class = (_temp = _class2 = class Serializer {
     return this.convertNativeTypeToDto(obj);
   }
 
+  _mapFunction(fn) {
+    const key = this.jsonc.fnRegistry.get(fn);
+    if (!key) return;
+
+    return { __fn__: key };
+  }
+
   _getInstance(instance) {
     return this._instancesMap.get(instance);
   }
-}, _class2.Symbols = { Serialize: Symbol() }, _temp), (_applyDecoratedDescriptor(_class.prototype, '_addInstance', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_addInstance'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_map', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_map'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_mapValue', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_mapValue'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_mapObject', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_mapObject'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_getInstance', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_getInstance'), _class.prototype)), _class);
+}, _class2.Symbols = { Serialize: Symbol() }, _temp), (_applyDecoratedDescriptor(_class.prototype, '_addInstance', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_addInstance'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_map', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_map'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_mapValue', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_mapValue'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_mapObject', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_mapObject'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_mapFunction', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_mapFunction'), _class.prototype), _applyDecoratedDescriptor(_class.prototype, '_getInstance', [_autobindDecorator2.default], Object.getOwnPropertyDescriptor(_class.prototype, '_getInstance'), _class.prototype)), _class);
 exports.default = Serializer;
 
 //# sourceMappingURL=serializer.js.map

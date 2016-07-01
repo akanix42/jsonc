@@ -8,13 +8,39 @@ var _annotations = require('./annotations');
 
 var _annotations2 = _interopRequireDefault(_annotations);
 
-var _autobindDecorator = require('autobind-decorator');
-
-var _autobindDecorator2 = _interopRequireDefault(_autobindDecorator);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
+
 _chai2.default.should();
+const expect = _chai2.default.expect;
 
 describe('Annotations', () => {
   describe('serializable', () => {
@@ -70,6 +96,26 @@ describe('Annotations', () => {
       } catch (ex) {
         ex.message.should.match(/type name must be supplied/);
       }
+    });
+  });
+  describe('include', () => {
+    it('should register the function', done => {
+      var _desc, _value, _class4;
+
+      const mockJsonc = {
+        registerFunction: (fn, type, key) => {
+          expect(fn).to.be.a('function');
+          expect(fn.name).to.equal('testFunction');
+          expect(type.constructor.name).to.equal('TestClass');
+          expect(key).to.equal('testFunction');
+          done();
+        }
+      };
+      const { include } = (0, _annotations2.default)(mockJsonc);
+
+      let TestClass = (_class4 = class TestClass {
+        testFunction() {}
+      }, (_applyDecoratedDescriptor(_class4.prototype, 'testFunction', [include], Object.getOwnPropertyDescriptor(_class4.prototype, 'testFunction'), _class4.prototype)), _class4);
     });
   });
 });

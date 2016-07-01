@@ -8,6 +8,7 @@ import Serializer from './serializer';
 import Deserializer from './deserializer';
 
 chai.should();
+const expect = chai.expect;
 chai.use(chaiThings);
 
 describe("Jsonc", () => {
@@ -140,7 +141,7 @@ describe("Jsonc", () => {
       it('should return the registered options', () => {
         class TestClass {
         }
-        const options = { test: 'test'};
+        const options = {test: 'test'};
 
         const jsonc = new Jsonc();
         jsonc.register(TestClass, 'test', options);
@@ -164,5 +165,23 @@ describe("Jsonc", () => {
       });
     });
 
+  });
+
+  describe('.registerFn()', () => {
+    it('registers the supplied fn of the registered class', () => {
+      class TestClass {
+        static __type__ = 'test';
+
+        testFunction() {
+
+        }
+      }
+
+      const jsonc = new Jsonc();
+      jsonc.register(TestClass);
+      jsonc.registerFunction(TestClass.prototype.testFunction, TestClass, 'test');
+      expect(jsonc.fnRegistry.get(TestClass.prototype.testFunction)).to.equal('test.test');
+      expect(jsonc.fnReverseRegistry.get('test.test')).to.equal(TestClass.prototype.testFunction);
+    })
   });
 });

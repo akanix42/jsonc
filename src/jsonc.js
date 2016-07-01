@@ -26,6 +26,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 let Jsonc = class Jsonc {
   constructor() {
     this.registry = {};
+    this.fnRegistry = new Map();
+    this.fnReverseRegistry = new Map();
   }
 
   register(type, typeName, options) {
@@ -42,6 +44,12 @@ let Jsonc = class Jsonc {
 
     this.registry[typeName] = { type, options };
     type.__type__ = typeName;
+  }
+
+  registerFunction(fn, type, key) {
+    const combinedKey = `${ type.__type__ }.${ key }`;
+    this.fnRegistry.set(fn, combinedKey);
+    this.fnReverseRegistry.set(combinedKey, fn);
   }
 
   hasType(type) {

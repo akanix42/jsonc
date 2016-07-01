@@ -3,7 +3,19 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Deserializer = exports.serializable = undefined;
+exports.Deserializer = undefined;
+
+var _annotations = require('./annotations');
+
+Object.keys(_annotations).forEach(function (key) {
+  if (key === "default") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _annotations[key];
+    }
+  });
+});
 
 var _deserializer = require('./deserializer');
 
@@ -13,8 +25,6 @@ Object.defineProperty(exports, 'Deserializer', {
     return _interopRequireDefault(_deserializer).default;
   }
 });
-
-var _annotations = require('./annotations');
 
 var _annotations2 = _interopRequireDefault(_annotations);
 
@@ -27,9 +37,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const jsonc = new _jsonc2.default();
 exports.default = jsonc;
 
-
-const annotations = new _annotations2.default(jsonc);
-let { serializable } = annotations;
-exports.serializable = serializable;
+(0, _annotations2.default)(jsonc);
 
 //# sourceMappingURL=index.js.map
