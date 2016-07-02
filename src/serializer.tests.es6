@@ -59,6 +59,14 @@ describe('Serializer', () => {
       output.should.equal('{instances:[{__type__:"__array__",__value__:{__array__:[1,2],__props__:{test:"123"}}}],root:[{__index__:0}]}');
     });
 
+    it('serializes an empty Map', () => {
+      const mockJsonc = {hasType: () => false};
+      const serializer = new Serializer(mockJsonc);
+      const output = json5.stringify(serializer.serialize(new Map()));
+
+      output.should.equal('{instances:[{__type__:"__native_map__",__value__:[]}],root:[{__index__:0}]}');
+    });
+
     it('serializes a Map', () => {
       const mockJsonc = {hasType: () => false};
       const serializer = new Serializer(mockJsonc);

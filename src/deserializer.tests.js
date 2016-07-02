@@ -95,6 +95,15 @@ describe('Deserializer', () => {
       [...output].should.eql([[1, 2]]);
     });
 
+    it('deserializes an empty Map', () => {
+      const mockJsonc = { hasTypeName: () => false };
+      const deserializer = new _deserializer2.default(mockJsonc);
+      const input = { instances: [{ __type__: "__native_map__", __value__: [] }], root: [{ __index__: 0 }] };
+      const output = deserializer.deserialize(input);
+
+      output.should.be.an.instanceOf(Map);
+    });
+
     it('deserializes a Set', () => {
       const mockJsonc = { hasTypeName: () => false };
       const deserializer = new _deserializer2.default(mockJsonc);

@@ -133,6 +133,7 @@ export default class Deserializer {
   _restoreMapPairs(obj) {
     const keys = [...obj.keys()];
     keys.forEach(key=> {
+      if (!key) return;
       obj.delete(key);
       const instance = this.instances[key.__index__];
       obj.set(instance[0], instance[1]);
