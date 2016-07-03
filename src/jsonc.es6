@@ -23,6 +23,14 @@ export default class Jsonc {
 
     this.registry[typeName] = {type, options};
     type.__type__ = typeName;
+
+    Object
+      .getOwnPropertyNames(type.prototype)
+      .filter(key=> {
+        let descriptor = Object.getOwnPropertyDescriptor(type.prototype, key);
+        return key !== 'constructor' && descriptor.value && typeof descriptor.value === 'function'
+      })
+      .forEach(key=>this.registerFunction(type.prototype[key], type, key));
   }
 
   registerFunction(fn, type, key) {
