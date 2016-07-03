@@ -88,7 +88,9 @@ export default class Serializer {
       __type__: "__native_map__"
     };
     const reference = this._addInstance(obj, instance);
-    instance.__value__ = this._map([...obj]);
+    const items = [...obj].map(item=>this._map(item));
+
+    instance.__value__ = items;
 
     return reference;
   }
@@ -117,7 +119,7 @@ export default class Serializer {
   _addInstance(originalObject, instance) {
     if (this._instancesMap.get(originalObject))
       return;
-    var reference = {__index__: this._instances.length};
+    var reference = { __index__: this._instances.length };
     this._instances.push(instance);
     this._instancesMap.set(originalObject, reference);
     return reference;
@@ -129,7 +131,7 @@ export default class Serializer {
       const props = Object.keys(obj).filter(key=>key.match(/^\D+$/));
       const array = _.map(obj, this._mapValue);
       if (props && props.length)
-        return {__array__: array, __props__: mapObject.call(this, _.pick(obj, props))};
+        return { __array__: array, __props__: mapObject.call(this, _.pick(obj, props)) };
       return array;
     }
     else {
@@ -185,9 +187,12 @@ export default class Serializer {
   @autobind
   _mapFunction(fn) {
     const key = this.jsonc.fnRegistry.get(fn);
-    if (!key) return;
+    if (!key) {
+      console.warn(`function ${fn.name} not found; the reference will not be saved.`)
+      return;
+    }
 
-    return {__fn__: key};
+    return { __fn__: key };
   }
 
   @autobind

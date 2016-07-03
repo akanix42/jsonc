@@ -121,7 +121,9 @@ let Serializer = (_class = (_temp = _class2 = class Serializer {
       __type__: "__native_map__"
     };
     const reference = this._addInstance(obj, instance);
-    instance.__value__ = this._map([...obj]);
+    const items = [...obj].map(item => this._map(item));
+
+    instance.__value__ = items;
 
     return reference;
   }
@@ -199,7 +201,10 @@ let Serializer = (_class = (_temp = _class2 = class Serializer {
 
   _mapFunction(fn) {
     const key = this.jsonc.fnRegistry.get(fn);
-    if (!key) return;
+    if (!key) {
+      console.warn(`function ${ fn.name } not found; the reference will not be saved.`);
+      return;
+    }
 
     return { __fn__: key };
   }

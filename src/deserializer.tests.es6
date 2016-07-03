@@ -69,14 +69,9 @@ describe('Deserializer', () => {
     });
 
     it('deserializes a Map', () => {
-      const mockJsonc = {hasTypeName: () => false};
+      const mockJsonc = { hasTypeName: () => false };
       const deserializer = new Deserializer(mockJsonc);
-      const input = {
-        instances: [{__type__: "__native_map__", __value__: [{__index__: 1}]}, {
-          __type__: "__array__",
-          __value__: [1, 2]
-        }], root: [{__index__: 0}]
-      };
+      const input = { instances: [{ __type__: "__native_map__", __value__: [[1, 2]] }], root: [{ __index__: 0 }] };
       const output = deserializer.deserialize(input);
 
       output.should.be.an.instanceOf(Map);
@@ -90,6 +85,27 @@ describe('Deserializer', () => {
       const output = deserializer.deserialize(input);
 
       output.should.be.an.instanceOf(Map);
+    });
+
+    it('deserializes a Map containing registered types', () => {
+      class TestClass {
+        static __type__ = 'test';
+        test = '123';
+      }
+
+      const mockJsonc = {
+        hasTypeName: (type) => type === 'test',
+        registry: { test: { type: TestClass } },
+        getOptions: ()=>null
+      };
+      const deserializer = new Deserializer(mockJsonc);
+      const input = {instances:[{__type__:"__native_map__",__value__:[["test",{__index__:1}],[{__index__:2},"test"],[{__index__:3},"test"]]},{__type__:"test",__value__:{test:"123"}},{__type__:"test",__value__:{test:"123"}},{__type__:"test",__value__:{test:"123"}}],root:[{__index__:0}]};
+      const output = deserializer.deserialize(input);
+      output.size.should.equal(3);
+      const items = [...output];
+      expect(items[0]).to.eql(['test', new TestClass()]);
+      expect(items[1]).to.eql([new TestClass(),'test']);
+      expect(items[2]).to.eql([new TestClass(),'test']);
     });
 
     it('deserializes a Set', () => {
@@ -190,7 +206,7 @@ describe('Deserializer', () => {
 
         }
       }
-      
+
       const mockJsonc = {
         hasTypeName: (typeName) => typeName === 'test',
         registry: {test: {type: TestClass}},

@@ -105,7 +105,7 @@ export default class Deserializer {
   }
 
   convertDtoToNativeMap(obj) {
-    return new Map([obj.__value__]);
+    return new Map(obj.__value__);
   }
 
   convertDtoToNativeSet(obj) {
@@ -134,12 +134,15 @@ export default class Deserializer {
   }
 
   _restoreMapPairs(obj) {
-    const keys = [...obj.keys()];
-    keys.forEach(key=> {
-      if (!key) return;
-      obj.delete(key);
-      const instance = this.instances[key.__index__];
-      obj.set(instance[0], instance[1]);
+    const items = [...obj];
+    items.forEach(item=> {
+      if (!item) return;
+      obj.delete(item[0]);
+      if (typeof item[0] === 'object')
+        item[0] = this.instances[item[0].__index__];
+      if (typeof item[1] === 'object')
+        item[1] = this.instances[item[1].__index__];
+      obj.set(item[0], item[1]);
     });
   }
 

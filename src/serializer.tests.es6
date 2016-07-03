@@ -72,7 +72,20 @@ describe('Serializer', () => {
       const serializer = new Serializer(mockJsonc);
       const output = json5.stringify(serializer.serialize(new Map([[1, 2]])));
 
-      output.should.equal('{instances:[{__type__:"__native_map__",__value__:[{__index__:1}]},{__type__:"__array__",__value__:[1,2]}],root:[{__index__:0}]}');
+      output.should.equal('{instances:[{__type__:"__native_map__",__value__:[[1,2]]}],root:[{__index__:0}]}');
+    });
+
+    it('serializes a Map containing registered types', () => {
+      class TestClass {
+        static __type__ = 'test';
+        test = '123';
+      }
+
+      const mockJsonc = {hasType: (type) => type.__type__ === 'test', registry: {'test': {}}, getOptions: ()=>null};
+      const serializer = new Serializer(mockJsonc);
+      const output = json5.stringify(serializer.serialize(new Map([['test', new TestClass()], [new TestClass(), 'test'], [new TestClass(), 'test']])));
+
+      output.should.equal('{instances:[{__type__:"__native_map__",__value__:[["test",{__index__:1}],[{__index__:2},"test"],[{__index__:3},"test"]]},{__type__:"test",__value__:{test:"123"}},{__type__:"test",__value__:{test:"123"}},{__type__:"test",__value__:{test:"123"}}],root:[{__index__:0}]}');
     });
 
     it('serializes a Set', () => {
@@ -131,7 +144,7 @@ describe('Serializer', () => {
       expect(output).to.equal('{instances:[],root:[{__fn__:"test"}]}');
     });
 
-    it('serializes registered functions of registered types', () => {
+    it('serializes prototype functions of registered types', () => {
       class TestClass {
         static __type__ = 'test';
         test = '123';

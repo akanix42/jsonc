@@ -84,7 +84,25 @@ describe('Serializer', () => {
       const serializer = new _serializer2.default(mockJsonc);
       const output = _json2.default.stringify(serializer.serialize(new Map([[1, 2]])));
 
-      output.should.equal('{instances:[{__type__:"__native_map__",__value__:[{__index__:1}]},{__type__:"__array__",__value__:[1,2]}],root:[{__index__:0}]}');
+      output.should.equal('{instances:[{__type__:"__native_map__",__value__:[[1,2]]}],root:[{__index__:0}]}');
+    });
+
+    it('serializes a Map containing registered types', () => {
+      var _class, _temp;
+
+      let TestClass = (_temp = _class = class TestClass {
+        constructor() {
+          this.test = '123';
+        }
+
+      }, _class.__type__ = 'test', _temp);
+
+
+      const mockJsonc = { hasType: type => type.__type__ === 'test', registry: { 'test': {} }, getOptions: () => null };
+      const serializer = new _serializer2.default(mockJsonc);
+      const output = _json2.default.stringify(serializer.serialize(new Map([['test', new TestClass()], [new TestClass(), 'test'], [new TestClass(), 'test']])));
+
+      output.should.equal('{instances:[{__type__:"__native_map__",__value__:[["test",{__index__:1}],[{__index__:2},"test"],[{__index__:3},"test"]]},{__type__:"test",__value__:{test:"123"}},{__type__:"test",__value__:{test:"123"}},{__type__:"test",__value__:{test:"123"}}],root:[{__index__:0}]}');
     });
 
     it('serializes a Set', () => {
@@ -105,16 +123,16 @@ describe('Serializer', () => {
     });
 
     it('serializes registered types', () => {
-      var _class, _temp;
+      var _class2, _temp2;
 
       const mockJsonc = { hasType: () => true, registry: { 'test': {} }, getOptions: () => null };
       const serializer = new _serializer2.default(mockJsonc);
-      let TestClass = (_temp = _class = class TestClass {
+      let TestClass = (_temp2 = _class2 = class TestClass {
         constructor() {
           this.test = '123';
         }
 
-      }, _class.__type__ = 'test', _temp);
+      }, _class2.__type__ = 'test', _temp2);
 
       const obj = new TestClass();
       const output = _json2.default.stringify(serializer.serialize(obj));
@@ -123,18 +141,18 @@ describe('Serializer', () => {
     });
 
     it('serializes registered types that extend Array', () => {
-      var _class2, _temp3;
+      var _class3, _temp4;
 
       const mockJsonc = { hasType: () => true, registry: { 'test': {} }, getOptions: () => null };
       const serializer = new _serializer2.default(mockJsonc);
-      let TestClass = (_temp3 = _class2 = class TestClass extends Array {
+      let TestClass = (_temp4 = _class3 = class TestClass extends Array {
         constructor(...args) {
-          var _temp2;
+          var _temp3;
 
-          return _temp2 = super(...args), this.test = '123', _temp2;
+          return _temp3 = super(...args), this.test = '123', _temp3;
         }
 
-      }, _class2.__type__ = 'test', _temp3);
+      }, _class3.__type__ = 'test', _temp4);
 
       const obj = new TestClass();
       obj.push(1);
@@ -155,16 +173,16 @@ describe('Serializer', () => {
       expect(output).to.equal('{instances:[],root:[{__fn__:"test"}]}');
     });
 
-    it('serializes registered functions of registered types', () => {
-      var _class3, _temp4;
+    it('serializes prototype functions of registered types', () => {
+      var _class4, _temp5;
 
-      let TestClass = (_temp4 = _class3 = class TestClass {
+      let TestClass = (_temp5 = _class4 = class TestClass {
         constructor() {
           this.test = '123';
         }
 
         testFunction() {}
-      }, _class3.__type__ = 'test', _temp4);
+      }, _class4.__type__ = 'test', _temp5);
 
 
       const mockJsonc = {
@@ -190,16 +208,16 @@ describe('Serializer', () => {
     });
 
     it('allows serialization overriding of registered types via the Serializer.Symbols.Serialize property', () => {
-      var _class4, _temp5;
+      var _class5, _temp6;
 
       const mockJsonc = { hasType: () => true, registry: { 'test': {} }, getOptions: () => null };
       const serializer = new _serializer2.default(mockJsonc);
-      let TestClass = (_temp5 = _class4 = class TestClass {
+      let TestClass = (_temp6 = _class5 = class TestClass {
 
         [_serializer2.default.Symbols.Serialize]() {
           return { test: '123' };
         }
-      }, _class4.__type__ = 'test', _temp5);
+      }, _class5.__type__ = 'test', _temp6);
 
       const obj = new TestClass();
       const output = _json2.default.stringify(serializer.serialize(obj));
@@ -221,17 +239,17 @@ describe('Serializer', () => {
     });
 
     it('allows excluding specified properties from serialization', () => {
-      var _class5, _temp6;
+      var _class6, _temp7;
 
       const serializationOptions = { exclude: ['test'] };
       const mockJsonc = { hasType: () => true, getOptions: () => serializationOptions };
       const serializer = new _serializer2.default(mockJsonc);
-      let TestClass = (_temp6 = _class5 = class TestClass {
+      let TestClass = (_temp7 = _class6 = class TestClass {
         constructor() {
           this.test = '123';
         }
 
-      }, _class5.__type__ = 'test', _temp6);
+      }, _class6.__type__ = 'test', _temp7);
 
       const obj = new TestClass();
       const output = _json2.default.stringify(serializer.serialize([obj]));
@@ -240,18 +258,18 @@ describe('Serializer', () => {
     });
 
     it('allows including only specified properties in serialization', () => {
-      var _class6, _temp7;
+      var _class7, _temp8;
 
       const serializationOptions = { include: ['test2'] };
       const mockJsonc = { hasType: () => true, getOptions: () => serializationOptions };
       const serializer = new _serializer2.default(mockJsonc);
-      let TestClass = (_temp7 = _class6 = class TestClass {
+      let TestClass = (_temp8 = _class7 = class TestClass {
         constructor() {
           this.test = '123';
           this.test2 = '123';
         }
 
-      }, _class6.__type__ = 'test', _temp7);
+      }, _class7.__type__ = 'test', _temp8);
 
       const obj = new TestClass();
       const output = _json2.default.stringify(serializer.serialize([obj]));
