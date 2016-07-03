@@ -3,7 +3,7 @@ import _ from 'lodash';
 import autobind from 'autobind-decorator'
 
 export default class Serializer {
-  static Symbols = {Serialize: Symbol()};
+  static Symbols = { Serialize: Symbol() };
   _nativeTypeMap = new Map([
     [Array, this.convertNativeArrayToDto.bind(this)],
     [Map, this.convertNativeMapToDto.bind(this)],

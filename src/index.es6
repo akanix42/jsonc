@@ -9,3 +9,4 @@ setJsonc(jsonc);
 export * from './annotations';
 
 export { default as Deserializer } from './deserializer';
+export { default as Serializer } from './serializer';

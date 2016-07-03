@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Deserializer = undefined;
+exports.Serializer = exports.Deserializer = undefined;
 
 var _annotations = require('./annotations');
 
@@ -23,6 +23,15 @@ Object.defineProperty(exports, 'Deserializer', {
   enumerable: true,
   get: function () {
     return _interopRequireDefault(_deserializer).default;
+  }
+});
+
+var _serializer = require('./serializer');
+
+Object.defineProperty(exports, 'Serializer', {
+  enumerable: true,
+  get: function () {
+    return _interopRequireDefault(_serializer).default;
   }
 });
 
