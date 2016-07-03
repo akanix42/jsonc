@@ -13,14 +13,7 @@ export function serializable(typeName, options) {
   };
 }
 
-export function include(target, key, descriptor) {
-  const fn = descriptor.value;
-  jsonc.registerFunction(fn, target, key);
-
-  return descriptor;
-}
-
-const exports = {serializable, include};
+const exports = { serializable };
 function setJsonc(val) {
   jsonc = val;
   return exports;

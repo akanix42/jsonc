@@ -4,7 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.serializable = serializable;
-exports.include = include;
 let jsonc;
 
 function serializable(typeName, options) {
@@ -17,14 +16,7 @@ function serializable(typeName, options) {
   };
 }
 
-function include(target, key, descriptor) {
-  const fn = descriptor.value;
-  jsonc.registerFunction(fn, target, key);
-
-  return descriptor;
-}
-
-const _exports = { serializable, include };
+const _exports = { serializable };
 function setJsonc(val) {
   jsonc = val;
   return _exports;
